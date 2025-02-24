@@ -1,0 +1,1 @@
+# Point d’entrée du script (gestion du scanner)

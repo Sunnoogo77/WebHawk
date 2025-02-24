@@ -1,10 +1,10 @@
-version: '3'  # Corrige la faute de frappe ici
+version: '3'  
 
 services:
   webhawk:
     build: .
     container_name: webhawk
     volumes:
-      - .:/app  # Synchroniser le dossier actuel avec /app dans le conteneur
+      - .:/app 
     stdin_open: true
     tty: true

@@ -6,5 +6,6 @@ RUN pip install requests beautifulsoup4
 
 WORKDIR /app
 
-COPY . /app/
+COPY . /app
+
 CMD ["python"]

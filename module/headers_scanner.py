@@ -1,0 +1,1 @@
+# Vérification des en-têtes HTTP
