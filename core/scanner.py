@@ -1,1 +1,0 @@
-# Gestion globale du scanner

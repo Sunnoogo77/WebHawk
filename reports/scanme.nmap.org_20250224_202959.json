@@ -1,0 +1,18 @@
+{
+    "target": "scanme.nmap.org",
+    "scan_date": "2025-02-24 20:29:59",
+    "results": {
+        "port_scan": {
+            "open_ports": [
+                [
+                    22,
+                    "SSH"
+                ],
+                [
+                    80,
+                    "HTTP"
+                ]
+            ]
+        }
+    }
+}

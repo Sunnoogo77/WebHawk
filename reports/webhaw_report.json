@@ -1,0 +1,9 @@
+{
+    "target": "https://www.google.com/",
+    "scan_date": "2025-02-24 15:54:22",
+    "results": {
+        "port_scan": {
+            "open_ports": []
+        }
+    }
+}
