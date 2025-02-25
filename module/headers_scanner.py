@@ -2,7 +2,7 @@
 
 import requests
 import os
-from core.report_manager import update_report
+# from core.report_manager import update_report
 
 SECURITY_HEADERS = {
     "Strict-Transport-Security": {
@@ -57,14 +57,14 @@ def check_security_headers(headers):
 
     return findings, missing_headers, misconfigured_headers
 
-def scan_headers(report_path, target):
-    if not os.path.exists(report_path):
-        print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable AVANT le scan !")
-        return
+def scan_headers(target):
+    # if not os.path.exists(report_path):
+    #     print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable AVANT le scan !")
+    #     return
 
     print(f"\n\t==============Scan des en-tête HTTP sur -->{target}<-- 🔍 ==============\n")
     
-    target = format_url(target)
+    # target = format_url(target)
     
     try :
         response = requests.get(target, timeout=5)
@@ -81,15 +81,21 @@ def scan_headers(report_path, target):
             print("\n\t Headers de Securité Manquants :")
             for header in missing_headers:
                 print(f"-->{header} (Protection abscente)")
-                
-                
-        update_report(report_path, "headers_scan", {
-            "headers_received": dict(headers),
-            "missing_headers": missing_headers,
-            "misconfigured_headers": misconfigured_headers
-        })
+            print("\n")
+        
+        # update_report(report_path, "headers_scan", {
+        #     "headers_received": dict(headers),
+        #     "missing_headers": missing_headers,
+        #     "misconfigured_headers": misconfigured_headers
+        # })
+        
+        # if response :
+        #     print(f"\n✅ Analyse des headers terminée. ---------> {headers}")
+        
+        # results = [dict(headers), missing_headers, misconfigured_headers]
+        
+        return headers, missing_headers, misconfigured_headers
     
     except requests.exceptions.RequestException as e:
-        print(f"\n Erreur dlors de la requête : {e}")
+        print(f"\n Erreur dlors de la requête : {e}\n")
     
-    print("\n✅ Analyse des headers terminée.")

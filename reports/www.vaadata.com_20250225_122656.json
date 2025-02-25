@@ -1,0 +1,88 @@
+{
+    "target": "www.vaadata.com",
+    "scan_date": "2025-02-25 12:26:56",
+    "results": {
+        "port_scan": {
+            "open_ports": [
+                [
+                    80,
+                    "HTTP"
+                ],
+                [
+                    443,
+                    "HTTPS"
+                ],
+                [
+                    8080,
+                    "HTTP-PROXY"
+                ]
+            ]
+        },
+        "headers_scan": {
+            "headers_received": {
+                "Date": "Tue, 25 Feb 2025 12:26:57 GMT",
+                "Content-Type": "text/html; charset=UTF-8",
+                "Transfer-Encoding": "chunked",
+                "Connection": "keep-alive",
+                "x-powered-by": "PHP/8.3",
+                "vary": "Accept-Encoding",
+                "Last-Modified": "Fri, 21 Feb 2025 11:03:40 GMT",
+                "Cache-Control": "max-age=43200",
+                "CF-Cache-Status": "HIT",
+                "Age": "13308",
+                "Report-To": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=uwE2FLvJ7vNShjCd8QC4IOe7PQMXJ8pHy6fuPkNkTTtuyqQ0Fhv4TnAEcR7CvLYSvYSYiVrdgdqS2MZ3ZN9tgpmSRqok%2BmdyxQI%2BNp3Zdoktl3PYz2UGughxZG4qai%2BzXw%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+                "NEL": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+                "Server": "cloudflare",
+                "CF-RAY": "9177afcce97c73d4-JNB",
+                "Content-Encoding": "gzip",
+                "alt-svc": "h3=\":443\"; ma=86400",
+                "server-timing": "cfL4;desc=\"?proto=TCP&rtt=97937&min_rtt=96539&rtt_var=17075&sent=7&recv=10&lost=0&retrans=0&sent_bytes=4498&recv_bytes=936&delivery_rate=43805&cwnd=252&unsent_bytes=0&cid=af874ce0816f70a1&ts=732&x=0\""
+            },
+            "missing_headers": [
+                "Strict-Transport-Security",
+                "X-Frame-Options",
+                "X-Content-Type-Options",
+                "X-XSS-Protection",
+                "Content-Security-Policy",
+                "Referrer-Policy",
+                "Permissions-Policy"
+            ],
+            "misconfigured_headers": []
+        },
+        "lfi_scan": {
+            "lfi_tests": {
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/passwd": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/shadow": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/hostname": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/issue": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/motd": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/group": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/hosts": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/lilo.conf": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/fstab": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/inittab": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/apache2/apache2.conf": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../etc/httpd/httpd.conf": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../var/www/html/config.php": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../var/www/html/config.inc": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../var/lib/mysql/mysql/user/my.cnf": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../var/lib/mysql/mysql/user/my.ini": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../var/lib/mysql/mysql/user/my.conf": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../var/lib/mysql/mysql/user/mydb.cnf": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../var/lib/mysql/mysql/user/mydb.ini": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../var/lib/mysql/mysql/user/mydb.conf": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/environ": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/cmdline": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/status": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/mounts": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/mem": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/fd": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/fd/0": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/fd/1": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../proc/self/fd/2": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../boot.ini": "Non Vuln\u00e9rable",
+                "https://www.vaadata.com/blog/fr/exploitation-dune-faille-lfi-local-file-inclusion-et-bonnes-pratiques-securite//?page=../../../../../../../../../../../../../../../../Windows/windows.ini": "Non Vuln\u00e9rable"
+            }
+        }
+    }
+}

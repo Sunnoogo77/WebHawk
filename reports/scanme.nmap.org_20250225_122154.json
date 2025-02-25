@@ -1,6 +1,6 @@
 {
     "target": "scanme.nmap.org",
-    "scan_date": "2025-02-24 20:22:39",
+    "scan_date": "2025-02-25 12:21:54",
     "results": {
         "port_scan": {
             "open_ports": [
@@ -16,9 +16,9 @@
         },
         "headers_scan": {
             "headers_received": {
-                "Date": "Mon, 24 Feb 2025 20:22:41 GMT",
+                "Date": "Tue, 25 Feb 2025 12:21:55 GMT",
                 "Server": "Apache/2.4.7 (Ubuntu)",
-                "Accept-Ranges": "none",
+                "Accept-Ranges": "bytes",
                 "Vary": "Accept-Encoding",
                 "Content-Encoding": "gzip",
                 "Content-Length": "2068",
