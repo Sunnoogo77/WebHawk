@@ -25,8 +25,9 @@ def extract_idor_parameters(url):
 def scan_idor(target_url, formatted_target):
     """Scanne les vulnérabilités IDOR en modifiant les identifiants dans les paramètres"""
     
-    print(f"\n🔍 Scan IDOR sur {formatted_target}...")
-
+    # print(f"\n🔍 Scan IDOR sur {formatted_target}...")
+    print(f"\n\t==============🔍 Scan IDOR sur  -->{formatted_target}<-- 🔍 ==============\n")
+    
     parsed_url, idor_params = extract_idor_parameters(target_url)
 
     if not idor_params:
@@ -52,9 +53,9 @@ def scan_idor(target_url, formatted_target):
                     print(f"✅ Pas vulnérable avec `{param}={value}`")
 
             except requests.exceptions.RequestException as e:
-                print(f"❌ Erreur lors de la requête : {e}")
+                print(f"❌ Erreur lors de la requête : {e}\n")
 
     if not findings:
-        print("\n✅ Aucun IDOR détecté.")
+        print("\n✅ Aucun IDOR détecté.\n")
 
     return findings

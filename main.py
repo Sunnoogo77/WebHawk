@@ -9,6 +9,9 @@ from module.port_scanner import scan_ports
 from module.headers_scanner import scan_headers
 from module.lfi_scanner import scan_lfi
 from module.sql_scanner import scan_sqli
+from module.xss_scanner import scan_xss
+from module.csrf_scanner import scan_csrf
+from module.idor_scanner import scan_idor
 
 from core.utils import normalize_target
 from core.report_manager import update_report
@@ -73,6 +76,7 @@ if __name__ == "__main__":
     parser.add_argument("--headers", action="store_true", help="Scanner uniquement les en-têtes HTTP")
     parser.add_argument("--lfi", action="store_true", help="Scanner uniquement les inclusions de fichiers locaux")
     parser.add_argument("--sqli", action="store_true", help=" Scan de l'Injection SQL (SQLi)")
+    parser.add_argument("--idor", action="store_true", help="Scan IDOR")
     
     
     #Mode Silencieux
@@ -117,7 +121,7 @@ if __name__ == "__main__":
         # Finalisation
         finalize_report(report_path)
         
-    elif args.ports or args.headers or args.lfi or args.sqli:
+    elif args.ports or args.headers or args.lfi or args.sqli or args.idor:
         
         if args.ports:
             try:
@@ -171,6 +175,18 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"❌ ERREUR lors du scan SQLI : {e}\n")
         
+        if args.idor:
+            try:
+                result = scan_idor(args.target, formated_target)
+                
+                if args.report:
+                    if not os.path.exists(report_path):
+                        print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
+                    
+                    update_report(report_path, "idor_scan", {"idor_tests": result})
+            except Exception as e:
+                print(f"❌ ERREUR lors du scan IDOR : {e}\n")
+                
         if args.report:
             finalize_report(report_path)
             
