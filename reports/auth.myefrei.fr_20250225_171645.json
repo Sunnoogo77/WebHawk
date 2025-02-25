@@ -1,0 +1,9 @@
+{
+    "target": "auth.myefrei.fr",
+    "scan_date": "2025-02-25 17:16:45",
+    "results": {
+        "sqli_scan": {
+            "sqli_tests": {}
+        }
+    }
+}

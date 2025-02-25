@@ -61,17 +61,12 @@ def scan_sqli(target, formated_target):
     
     print(f"\n\t==============Scan SQLI sur -->{formated_target}<-- 🔍 ==============\n")
     
-    session = requests.Session()
-    # csrf_token = get_csrf_token(session, target)
     
     vuln_found = False
     forms = find_forms(target)
     sqli_results = {}
     
     if not forms:
-        # print("⚠️ Aucun formulaire détecté sur cette page.")
-        # sqli_results, vuln_found = scan_sqli1(target)
-        # return sqli_results
         return {}
     
     for form in forms:
@@ -80,14 +75,10 @@ def scan_sqli(target, formated_target):
         inputs = form.get("inputs", [])
         
         target_url = target + action if action else target
-        allowed_methods = check_allowed_methods(target_url)
+        # allowed_methods = check_allowed_methods(target_url)
         
-        # print(f"\n\t-------->{target_url}")
-        # print(f"\n\t-------->{allowed_methods}")
-        # print(f"\n\t-------->{inputs}\n")
         
         for input_field in inputs:
-            print(f"\n\t|-------->{input_field}\n")
             field_name = input_field.get("name")
             if not field_name:
                 continue
@@ -95,36 +86,17 @@ def scan_sqli(target, formated_target):
             for payload in SQLI_PAYLOADS:
                 form_data = {field_name: payload}
                 
-                # if csrf_token:
-                #     form_data["_csrf"] = csrf_token
-                
                 try:
                     if method == "post":
                         response = requests.post(target_url, data=form_data, timeout=5)
-                        # print(f"-------->{form_data}")
                     else:
                         response = requests.get(target_url, params=form_data, timeout=5)
-                # try:
-                #     if "post" in allowed_methods:
-                #         response = session.post(target_url, data=form_data, timeout=5)
-                #         print(f"|-------->{form_data}")
-                #     elif "get" in allowed_methods:
-                #         response = session.get(target_url, params=form_data, timeout=5)
-                    
-                    # print(f"----|---->{form_data}")
-                    # print(f"-------->{response}------------>")  
-                    
                     response_text = response.text.lower()
-                    # print(f"{response_text}")
                     
                     if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
                         print(f"🔥 SQLi détectée dans le formulaire `{field_name}` avec : {payload}")
                         vuln_found = True
                         sqli_results[target_url] = f"VULNERABLE - Champ {field_name}"
-                    # if response and detect_hidden_sqli_errors(response.text):
-                    #     print(f"🔥 SQLi détectée dans le formulaire `{field_name}` avec : {payload}")
-                    #     vuln_found = True
-                    #     sqli_results[target_url] = f"VULNERABLE - Champ {field_name}"
                     
                 
                 except requests.exceptions.RequestException as e:

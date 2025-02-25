@@ -1,0 +1,90 @@
+{
+    "target": "auth.myefrei.fr",
+    "scan_date": "2025-02-25 18:19:08",
+    "results": {
+        "port_scan": {
+            "open_ports": [
+                [
+                    80,
+                    "HTTP"
+                ],
+                [
+                    443,
+                    "HTTPS"
+                ]
+            ]
+        },
+        "headers_scan": {
+            "headers_received": {
+                "Server": "nginx",
+                "Date": "Tue, 25 Feb 2025 18:19:20 GMT",
+                "Content-Type": "text/html; charset=utf-8",
+                "Transfer-Encoding": "chunked",
+                "Connection": "keep-alive",
+                "Content-Security-Policy": "script-src 'self' https://www.recaptcha.net/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.gstatic.cn/recaptcha/ https://www.googletagmanager.com/ https://*.google-analytics.com/ 'unsafe-inline' 'unsafe-eval';connect-src 'self' https://www.recaptcha.net/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.gstatic.cn/recaptcha/ https://www.googletagmanager.com/ https://*.google-analytics.com/;frame-src 'self' https://www.recaptcha.net/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.gstatic.cn/recaptcha/ https://www.googletagmanager.com/ https://*.google-analytics.com/;img-src 'self' https://www.recaptcha.net/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.gstatic.cn/recaptcha/ https://www.googletagmanager.com/ https://*.google-analytics.com/ data:;object-src 'self';default-src 'self';base-uri 'self';font-src 'self' https: data:;frame-ancestors 'self';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+                "Cross-Origin-Opener-Policy": "same-origin",
+                "Cross-Origin-Resource-Policy": "same-origin",
+                "Origin-Agent-Cluster": "?1",
+                "Referrer-Policy": "no-referrer",
+                "Strict-Transport-Security": "max-age=15552000; includeSubDomains, max-age=31536000; includeSubDomains; preload",
+                "X-Content-Type-Options": "nosniff",
+                "X-DNS-Prefetch-Control": "off",
+                "X-Download-Options": "noopen",
+                "X-Frame-Options": "SAMEORIGIN",
+                "X-Permitted-Cross-Domain-Policies": "none",
+                "X-XSS-Protection": "0",
+                "Cache-Control": "no-cache, no-store",
+                "Pragma": "no-cache",
+                "set-cookie": "_csrf=s%3AHwpscldOlWQh_cPnpJqumxIS.h7oSyozfDnewd%2BbKlq31bVVzXryAyVWVz%2FHtxdTGd8o; Path=/; HttpOnly; Secure",
+                "Vary": "Accept-Encoding",
+                "Content-Encoding": "gzip"
+            },
+            "missing_headers": [
+                "Permissions-Policy"
+            ],
+            "misconfigured_headers": [
+                [
+                    "Strict-Transport-Security",
+                    "max-age=15552000; includeSubDomains, max-age=31536000; includeSubDomains; preload",
+                    "max-age=63072000; includeSubDomains"
+                ],
+                [
+                    "X-Frame-Options",
+                    "SAMEORIGIN",
+                    "DENY"
+                ],
+                [
+                    "X-XSS-Protection",
+                    "0",
+                    "1; mode=block"
+                ],
+                [
+                    "Referrer-Policy",
+                    "no-referrer",
+                    "strict-origin-when-cross-origin"
+                ]
+            ]
+        },
+        "lfi_scan": {
+            "lfi_tests": {
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/passwd": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/shadow": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/hostname": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/issue": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/motd": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/group": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/hosts": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/apache2/apache2.conf": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../etc/httpd/httpd.conf": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../var/www/html/config.php": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../proc/self/environ": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../proc/self/cmdline": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../boot.ini": "Non Vuln\u00e9rable",
+                "https://auth.myefrei.fr//?page=../../../../../../../../../../../../../../../../Windows/windows.ini": "Non Vuln\u00e9rable"
+            }
+        },
+        "sqli_scan": {
+            "sqli_tests": {}
+        }
+    }
+}

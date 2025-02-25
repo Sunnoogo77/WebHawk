@@ -26,16 +26,16 @@ def run_all_scans(target, report_path, silent):
         print(f"\n\n\t============== Debut du Scan pour -->{target}<-- 🔍 ==============\n")
         
     # 1️⃣ Scan des ports
-    scan_ports(report_path, target)
+    scan_ports(target)
 
     # 2️⃣ Scan des headers HTTP
-    scan_headers(report_path, target)
+    scan_headers(target)
     
     # 3️⃣ Scan LFI
-    scan_lfi(report_path, target)
+    scan_lfi(target)
     
     #  Scan SQLi
-    scan_lfi(re)
+    scan_sqli(target)
     
     
     # Finalisation
@@ -89,9 +89,36 @@ if __name__ == "__main__":
         
     # Gestion des scans demandés
     if args.full:
-        run_all_scans(formated_target, report_path, args.silent)
+        if not args.silent:
+            print(f"\n\n\t============== Debut du Scan Complet pour -->{domain}<-- 🔍 ==============\n")
+            
+        try:
+            port = scan_ports(domain)
+            header, missing_headers, misconfigured_headers = scan_headers(formated_target)
+            lfi = scan_lfi(args.target, formated_target)
+            sqli = scan_sqli(args.target, formated_target)
+            
+            if args.report:
+                if not os.path.exists(report_path):
+                    print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
+                
+                update_report(report_path, "port_scan", {"open_ports": port})
+                update_report(report_path, "headers_scan", {
+                    "headers_received": dict(header),
+                    "missing_headers": missing_headers,
+                    "misconfigured_headers": misconfigured_headers
+                    })
+                update_report(report_path, "lfi_scan", {"lfi_tests": lfi})
+                update_report(report_path, "sqli_scan", {"sqli_tests": sqli})
+                    
+        except Exception as e:
+            print(f"❌ ERREUR lors du scan des ports : {e}\n")
+
+        # Finalisation
+        finalize_report(report_path)
+        
     elif args.ports or args.headers or args.lfi or args.sqli:
-        # run_selected_scans(formated_target, report_path, args.ports, args.headers, args.lfi, args.silent)
+        
         if args.ports:
             try:
                 result = scan_ports(domain)
