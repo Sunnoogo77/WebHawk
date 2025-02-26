@@ -9,57 +9,10 @@ from module.port_scanner import scan_ports
 from module.headers_scanner import scan_headers
 from module.lfi_scanner import scan_lfi
 from module.sql_scanner import scan_sqli
-from module.xss_scanner import scan_xss
-from module.csrf_scanner import scan_csrf
-from module.idor_scanner import scan_idor
 
 from core.utils import normalize_target
 from core.report_manager import update_report
 
-def run_all_scans(target, report_path, silent):
-    
-    # report_path = initialize_report(target)
-
-    # if not os.path.exists(report_path):
-    #     print(f"❌ ERREUR : Le fichier {report_path} n'a pas été créé !")
-    #     return
-    
-    if not silent:
-        print(f"\n🚀 Début du scan complet pour {target}")
-        print(f"\n\n\t============== Debut du Scan pour -->{target}<-- 🔍 ==============\n")
-        
-    # 1️⃣ Scan des ports
-    scan_ports(target)
-
-    # 2️⃣ Scan des headers HTTP
-    scan_headers(target)
-    
-    # 3️⃣ Scan LFI
-    scan_lfi(target)
-    
-    #  Scan SQLi
-    scan_sqli(target)
-    
-    
-    # Finalisation
-    finalize_report(report_path)
-
-# def run_selected_scans(target, report_path, scan_port_flag, scan_headers_flag, scan_lfi_flag, silent):
-    
-#     if not silent:
-#         print(f"\n\t============== Scan 🔍 ==============\n")
-    
-#     if scan_port_flag:
-#         scan_ports(report_path, target)
-    
-#     if scan_headers_flag:
-#         scan_headers(report_path, target)
-    
-#     if scan_lfi_flag:
-#         scan_lfi(report_path, target)
-
-    
-#     finalize_report(report_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="WebHawk - Scanner de vulnérabilités web")
@@ -175,22 +128,10 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"❌ ERREUR lors du scan SQLI : {e}\n")
         
-        if args.idor:
-            try:
-                result = scan_idor(args.target, formated_target)
-                
-                if args.report:
-                    if not os.path.exists(report_path):
-                        print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
-                    
-                    update_report(report_path, "idor_scan", {"idor_tests": result})
-            except Exception as e:
-                print(f"❌ ERREUR lors du scan IDOR : {e}\n")
-                
-        if args.report:
-            finalize_report(report_path)
+        
             
     else:
         print("❌ Erreur : Vous devez spécifier un mode de scan (--full, --ports, --headers, --lfi, --sqli)")
         parser.print_help()
         exit(1)
+

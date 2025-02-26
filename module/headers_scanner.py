@@ -58,13 +58,10 @@ def check_security_headers(headers):
     return findings, missing_headers, misconfigured_headers
 
 def scan_headers(target):
-    # if not os.path.exists(report_path):
-    #     print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable AVANT le scan !")
-    #     return
+    
 
     print(f"\n\t==============Scan des en-tête HTTP sur -->{target}<-- 🔍 ==============\n")
     
-    # target = format_url(target)
     
     try :
         response = requests.get(target, timeout=5)
@@ -82,17 +79,6 @@ def scan_headers(target):
             for header in missing_headers:
                 print(f"-->{header} (Protection abscente)")
             print("\n")
-        
-        # update_report(report_path, "headers_scan", {
-        #     "headers_received": dict(headers),
-        #     "missing_headers": missing_headers,
-        #     "misconfigured_headers": misconfigured_headers
-        # })
-        
-        # if response :
-        #     print(f"\n✅ Analyse des headers terminée. ---------> {headers}")
-        
-        # results = [dict(headers), missing_headers, misconfigured_headers]
         
         return headers, missing_headers, misconfigured_headers
     

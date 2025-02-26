@@ -1,6 +1,6 @@
 # Détection des injections SQL
 import requests
-from core.utils import find_forms, get_csrf_token, detect_hidden_sqli_errors, check_allowed_methods
+from core.utils import find_forms, detect_hidden_sqli_errors, get_csrf_token, detect_hidden_sqli_errors, check_allowed_methods
 
 SQLI_PAYLOADS = [
     "'", "' OR '1'='1",  "' OR '1'='1' --", " \" OR \"1\"=\"1", "' OR 1=1--", "\" OR 1=1--",
@@ -63,44 +63,59 @@ def scan_sqli(target, formated_target):
     
     
     vuln_found = False
-    forms = find_forms(target)
     sqli_results = {}
     
-    if not forms:
-        return {}
-    
-    for form in forms:
-        action = form.get("action") 
-        method = form.get("method", "get")
-        inputs = form.get("inputs", [])
+    for payload in SQLI_PAYLOADS:
+        test_url = f"{target}?input={payload}"
         
-        target_url = target + action if action else target
-        # allowed_methods = check_allowed_methods(target_url)
-        
-        
-        for input_field in inputs:
-            field_name = input_field.get("name")
-            if not field_name:
-                continue
+        try:
+            response = requests.get(test_url, timeout=5)
+            response_text = response.text.lower()
             
-            for payload in SQLI_PAYLOADS:
-                form_data = {field_name: payload}
+            if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
+                print(f"🔥 SQLi détectée dans l'URL : {test_url}")
+                vuln_found = True
+                sqli_results[test_url] = "VULNERABLE (URL Injection)"
+        
+        except requests.exceptions.RequestException as e:
+            print(f"❌ Erreur lors de la requête URL SQLi : {e}")
+    
+    forms = find_forms(target)
+    
+    
+    if forms:
+        for form in forms:
+            action = form.get("action") 
+            method = form.get("method", "get")
+            inputs = form.get("inputs", [])
+            
+            target_url = target + action if action else target
+            # allowed_methods = check_allowed_methods(target_url)
+            
+            
+            for input_field in inputs:
+                field_name = input_field.get("name")
+                if not field_name:
+                    continue
                 
-                try:
-                    if method == "post":
-                        response = requests.post(target_url, data=form_data, timeout=5)
-                    else:
-                        response = requests.get(target_url, params=form_data, timeout=5)
-                    response_text = response.text.lower()
+                for payload in SQLI_PAYLOADS:
+                    form_data = {field_name: payload}
                     
-                    if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
-                        print(f"🔥 SQLi détectée dans le formulaire `{field_name}` avec : {payload}")
-                        vuln_found = True
-                        sqli_results[target_url] = f"VULNERABLE - Champ {field_name}"
+                    try:
+                        if method == "post":
+                            response = requests.post(target_url, data=form_data, timeout=5)
+                        else:
+                            response = requests.get(target_url, params=form_data, timeout=5)
+                        response_text = response.text.lower()
+                        
+                        if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
+                            print(f"🔥 SQLi détectée dans le formulaire `{field_name}` avec : {payload}")
+                            vuln_found = True
+                            sqli_results[target_url] = f"VULNERABLE - Champ {field_name}"
+                        
                     
-                
-                except requests.exceptions.RequestException as e:
-                    print(f"❌ Erreur lors de la requête : {e}")
+                    except requests.exceptions.RequestException as e:
+                        print(f"❌ Erreur lors de la requête : {e}")
     
     if not vuln_found:
         print("\n✅ Aucun SQLi détecté.\n")

@@ -5,8 +5,6 @@ import os
 import concurrent.futures
 
 
-# from core.report_manager import update_report
-
 COMMON_PORTS = {
     21: "FTP",
     22: "SSH",
@@ -42,10 +40,6 @@ def scan_port(target, port):
 
 def scan_ports(target, ports=COMMON_PORTS.keys()):
     """Scanne une liste de ports en parallèle sur une cible"""
-    
-    # if not os.path.exists(report_path):
-    #     print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable AVANT le scan !")
-    #     return
 
     print(f"\n\t==============Scan des ports sur -->{target}<-- 🔍 ==============\n")
     
@@ -63,11 +57,4 @@ def scan_ports(target, ports=COMMON_PORTS.keys()):
         print(f"\n✅ SCAN TERMINÉ : Ports ouverts détectés : {open_ports}\n")
     else:
         print("\n❌ Aucun port ouvert détecté.\n")
-
-    # if not os.path.exists(report_path):
-    #     print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !")
-    #     return
-
-    # update_report(report_path, "port_scan", {"open_ports": open_ports})
-    
     return open_ports

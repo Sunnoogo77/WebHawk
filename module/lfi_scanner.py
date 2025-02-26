@@ -30,6 +30,9 @@ LFI_SIGNATURES = [
     "[mysqld]", "[client]", "password=",           # Indicateurs MySQL
     "EXT3", "EXT4", "UUID=", "dev/sda",            # Fichiers de montage Linux
     "HTTP_USER_AGENT", "HTTP_COOKIE", "HTTP_HOST"  # Variables d'environnement
+    
+    "Warning: include(", "Warning: require(", "failed to open stream",
+    "No such file or directory", "on line", "open_basedir restriction"
 ]
 
 
@@ -42,22 +45,23 @@ def scan_lfi(target, formated_target):
     findings = {}
     
     for payload in LFI_PAYLOADS:
-        url = f"{target}/?page={payload}"
-        
-        try:
-            response = requests.get(url, timeout=5)
-            response_text = response.text.lower()
+        for extra in ["", "%00"]:
+            url = f"{target}/?page={payload}{extra}"
             
-            if any(signature in response_text for signature in LFI_SIGNATURES):
-                print(f"🔥 LFI détectée : {url}")
-                print(f"\t----------> {response.text[:500]}...\n")
-                vuln_found = True
-                findings[url] = "VULNERABLE"
-            else:
-                findings[url] = "Non Vulnérable"
+            try:
+                response = requests.get(url, timeout=5)
+                response_text = response.text.lower()
                 
-        except requests.exceptions.RequestException as e:
-            print(f"❌ Erreur lors de la requête : {e}")
+                if any(signature in response_text for signature in LFI_SIGNATURES):
+                    print(f"🔥 LFI détectée : {url}")
+                    print(f"\t----------> {response.text[:500]}...\n")
+                    vuln_found = True
+                    findings[url] = "VULNERABLE"
+                else:
+                    findings[url] = "Non Vulnérable"
+                    
+            except requests.exceptions.RequestException as e:
+                print(f"❌ Erreur lors de la requête : {e}")
             pass
     
     
@@ -65,6 +69,3 @@ def scan_lfi(target, formated_target):
         print("\n✅ Aucune LFI détectée.\n")
     
     return findings
-        
-        
-
