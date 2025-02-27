@@ -4,6 +4,7 @@ import socket
 import os
 import concurrent.futures
 
+from urllib.parse import urlparse
 
 COMMON_PORTS = {
     21: "FTP",
@@ -23,6 +24,12 @@ COMMON_PORTS = {
     5900: "VNC",
     8080: "HTTP-PROXY",
     }
+
+
+    
+    
+    
+
 
 def scan_port(target, port):
     
@@ -46,6 +53,7 @@ def scan_ports(target, ports=COMMON_PORTS.keys()):
     open_ports = []
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        
         futures = [executor.submit(scan_port, target, port) for port in ports]
         
         for future in concurrent.futures.as_completed(futures):

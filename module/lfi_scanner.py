@@ -1,7 +1,11 @@
 # Détection des inclusions locales de fichiers (LFI)
 import requests
+import urllib3
+
 import os
 from core.report_manager import update_report
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 #Liste des payloads LFI à tester
 LFI_PAYLOADS = [
@@ -43,13 +47,16 @@ def scan_lfi(target, formated_target):
     
     vuln_found = False
     findings = {}
-    
     for payload in LFI_PAYLOADS:
         for extra in ["", "%00"]:
             url = f"{target}/?page={payload}{extra}"
             
+            session = requests.Session()
+            session.verify = False
             try:
-                response = requests.get(url, timeout=5)
+                # response = requests.get(url, timeout=5)
+                
+                response = session.get(url, timeout=5)
                 response_text = response.text.lower()
                 
                 if any(signature in response_text for signature in LFI_SIGNATURES):

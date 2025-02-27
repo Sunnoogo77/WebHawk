@@ -32,6 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("--idor", action="store_true", help="Scan IDOR")
     
     
+    parser.add_argument("--ignore-ssl", action="store_true", help="Ignorer les erreurs SSL")
     #Mode Silencieux
     parser.add_argument("--silent" ,action="store_true", help="Mode silencieux (Affiche uniquement le rapport final)")
     
@@ -52,8 +53,10 @@ if __name__ == "__main__":
         try:
             port = scan_ports(domain)
             header, missing_headers, misconfigured_headers = scan_headers(formated_target)
-            lfi = scan_lfi(args.target, formated_target)
-            sqli = scan_sqli(args.target, formated_target)
+            # lfi = scan_lfi(args.target, formated_target)
+            # sqli = scan_sqli(args.target, formated_target)
+            lfi = scan_lfi(formated_target, domain)
+            sqli = scan_sqli(formated_target, domain)
             
             if args.report:
                 if not os.path.exists(report_path):

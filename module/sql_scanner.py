@@ -1,6 +1,9 @@
 # Détection des injections SQL
 import requests
+import urllib3
 from core.utils import find_forms, detect_hidden_sqli_errors, get_csrf_token, detect_hidden_sqli_errors, check_allowed_methods
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 SQLI_PAYLOADS = [
     "'", "' OR '1'='1",  "' OR '1'='1' --", " \" OR \"1\"=\"1", "' OR 1=1--", "\" OR 1=1--",
@@ -65,11 +68,17 @@ def scan_sqli(target, formated_target):
     vuln_found = False
     sqli_results = {}
     
+    
+    
     for payload in SQLI_PAYLOADS:
         test_url = f"{target}?input={payload}"
         
+        session = requests.Session()
+        session.verify = False
         try:
-            response = requests.get(test_url, timeout=5)
+            # response = requests.get(test_url, timeout=5)
+            response = session.get(test_url, timeout=5)
+            print(f"--------------------| {test_url}")
             response_text = response.text.lower()
             
             if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
@@ -101,11 +110,16 @@ def scan_sqli(target, formated_target):
                 for payload in SQLI_PAYLOADS:
                     form_data = {field_name: payload}
                     
+                    session = requests.Session()
+                    session.verify = False
                     try:
                         if method == "post":
-                            response = requests.post(target_url, data=form_data, timeout=5)
+                            # response = requests.post(target_url, data=form_data, timeout=5)
+                            response = session.post(target_url, data=form_data, timeout=5)
                         else:
-                            response = requests.get(target_url, params=form_data, timeout=5)
+                            # response = requests.get(target_url, params=form_data, timeout=5)
+                            response = session.get(target_url, params=form_data, timeout=5)
+                        
                         response_text = response.text.lower()
                         
                         if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):

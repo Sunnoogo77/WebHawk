@@ -1,28 +1,75 @@
 # Fonctions utilitaires
 from urllib.parse import urlparse
 import requests
+import re
 from bs4 import BeautifulSoup
+
+def extract_domain_or_ip(target):
+    try:
+        parsed_url = urlparse(target)
+        hostname = parsed_url.hostname
+        if hostname:
+            # Vérification IPv4
+            ipv4_pattern = re.compile(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$")
+            if ipv4_pattern.match(hostname):
+                return hostname
+
+            # Vérification IPv6
+            ipv6_pattern = re.compile(r"([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}")
+            if ipv6_pattern.match(hostname):
+                return hostname
+    except ValueError:
+        pass  
+    return None
+    
+def is_ip(url):
+    try:
+        parsed_url = urlparse(url)
+        hostname = parsed_url.hostname
+        if hostname:
+            # Vérification IPv4
+            ipv4_pattern = re.compile(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$")
+            if ipv4_pattern.match(hostname):
+                return True
+
+            # Vérification IPv6
+            ipv6_pattern = re.compile(r"([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}")
+            if ipv6_pattern.match(hostname):
+                return True
+    except ValueError:
+        pass  
+    return False
 
 def normalize_target(target):
     """
     Prend une URL sous n'importe quelle forme et extrait le domaine + ajoute le bon scheme.
     """
     if not target.startswith("http://") and not target.startswith("https://"):
-        target = "http://" + target
+        if is_ip(target):
+            target = "https://" + extract_domain_or_ip(target)
+        else:
+            target = "http://" + target
+            return normalize_target(target)
+            
+    else:
+        if is_ip(target):
+            target = "https://" + extract_domain_or_ip(target)
     
     parsed_url = urlparse(target)
     
     domain = parsed_url.netloc if parsed_url.netloc else parsed_url.path
     
     # return parsed_url.scheme + "://" + domain, domain
-    return  "http://" + domain, domain
+    return  target, domain
 
 def find_forms(target):
     """Scanne une page pour détecter les formulaires et leurs champs"""
     
+    session = requests.Session()
+    session.verify = False
     
     try:
-        response = requests.get(target, timeout=5)
+        response = session.get(target, timeout=5)
         soup = BeautifulSoup(response.text, 'html.parser')
         
         forms = soup.find_all('form')
