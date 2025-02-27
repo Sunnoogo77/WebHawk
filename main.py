@@ -9,6 +9,7 @@ from module.port_scanner import scan_ports
 from module.headers_scanner import scan_headers
 from module.lfi_scanner import scan_lfi
 from module.sql_scanner import scan_sqli
+from module.idor_scanner import scan_idor
 
 from core.utils import normalize_target
 from core.report_manager import update_report
@@ -57,7 +58,7 @@ if __name__ == "__main__":
             # sqli = scan_sqli(args.target, formated_target)
             lfi = scan_lfi(formated_target, domain)
             sqli = scan_sqli(formated_target, domain)
-            
+            idor = scan_idor(formated_target, domain)
             if args.report:
                 if not os.path.exists(report_path):
                     print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
@@ -70,6 +71,7 @@ if __name__ == "__main__":
                     })
                 update_report(report_path, "lfi_scan", {"lfi_tests": lfi})
                 update_report(report_path, "sqli_scan", {"sqli_tests": sqli})
+                update_report(report_path, "idor_scan", {"idor_tests": idor})
                     
         except Exception as e:
             print(f"❌ ERREUR lors du scan des ports : {e}\n")
@@ -130,6 +132,18 @@ if __name__ == "__main__":
                     update_report(report_path, "sqli_scan", {"sqli_tests": result})
             except Exception as e:
                 print(f"❌ ERREUR lors du scan SQLI : {e}\n")
+        
+        if args.idor:
+            try:
+                result = scan_idor(formated_target,args.target)
+                
+                if args.report:
+                    if not os.path.exists(report_path):
+                        print(f"❌ ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
+                    
+                    update_report(report_path, "idor_scan", {"idor_tests": result})
+            except Exception as e:
+                print(f"❌ ERREUR lors du scan IDOR : {e}\n")
         
         
             
