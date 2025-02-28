@@ -53,7 +53,7 @@ SQLI_SIGNATURES = [
 #             else:
 #                 sqli_results[test_url] = "Non Vulnerable"
 #         except requests.exceptions.RequestException as e:
-#             print(f"❌ Erreur lors de la requête : {e}")
+#             print(f"[!][!][XXX] Erreur lors de la requête : {e}")
 #             pass
     
 
@@ -87,7 +87,7 @@ def scan_sqli(target, formated_target):
                 sqli_results[test_url] = "VULNERABLE (URL Injection)"
         
         except requests.exceptions.RequestException as e:
-            print(f"❌ Erreur lors de la requête URL SQLi : {e}")
+            print(f"[!][!][XXX] Erreur lors de la requête URL SQLi : {e}")
     
     forms = find_forms(target)
     
@@ -129,9 +129,9 @@ def scan_sqli(target, formated_target):
                         
                     
                     except requests.exceptions.RequestException as e:
-                        print(f"❌ Erreur lors de la requête : {e}")
+                        print(f"[!][!][XXX] Erreur lors de la requête : {e}")
     
     if not vuln_found:
-        print("\n✅ Aucun SQLi détecté.\n")
+        print("\n✅  Aucun SQLi détecté.\n")
     
     return sqli_results

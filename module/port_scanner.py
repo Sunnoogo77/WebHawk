@@ -62,7 +62,7 @@ def scan_ports(target, ports=COMMON_PORTS.keys()):
                 open_ports.append(result)
 
     if open_ports:
-        print(f"\n✅ SCAN TERMINÉ : Ports ouverts détectés : {open_ports}\n")
+        print(f"\n✅  SCAN TERMINÉ : Ports ouverts détectés : {open_ports}\n")
     else:
-        print("\n❌ Aucun port ouvert détecté.\n")
+        print("\n[!][!][XXX] Aucun port ouvert détecté.\n")
     return open_ports

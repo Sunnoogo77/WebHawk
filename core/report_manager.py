@@ -53,7 +53,7 @@ def update_report(report_path, section, data):
     with open(report_path, "w") as f:
         json.dump(report_data, f, indent=4)
         
-    # print(f"✅ Mise à jour du rapport : {report_path}")
+    # print(f"✅  Mise à jour du rapport : {report_path}")
 
 def finalize_report(report_path):
     print(f"\n📄 Rapport final généré : {report_path}\n")

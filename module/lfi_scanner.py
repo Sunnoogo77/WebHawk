@@ -68,11 +68,11 @@ def scan_lfi(target, formated_target):
                     findings[url] = "Non Vulnérable"
                     
             except requests.exceptions.RequestException as e:
-                print(f"❌ Erreur lors de la requête : {e}")
+                print(f"[!][!][XXX] Erreur lors de la requête : {e}")
             pass
     
     
     if not vuln_found:
-        print("\n✅ Aucune LFI détectée.\n")
+        print("\n✅  Aucune LFI détectée.\n")
     
     return findings
