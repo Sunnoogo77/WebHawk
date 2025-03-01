@@ -11,6 +11,7 @@ from module.lfi_scanner import scan_lfi
 from module.sql_scanner import scan_sqli
 from module.idor_scanner import scan_idor
 from module.xss_scanner import scan_xss
+from module.csrf_scanner import scan_csrf
 
 from core.utils import normalize_target
 from core.report_manager import update_report
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     parser.add_argument("--sqli", action="store_true", help=" Scan de l'Injection SQL (SQLi)")
     parser.add_argument("--idor", action="store_true", help="Scan IDOR")
     parser.add_argument("--xss", action="store_true", help="Scan des vulnérabilités XSS")
-
+    parser.add_argument("--csrf", action="store_true", help="Scan des vulnérabilité CSRF")
     
     
     parser.add_argument("--ignore-ssl", action="store_true", help="Ignorer les erreurs SSL")
@@ -63,6 +64,7 @@ if __name__ == "__main__":
             sqli = scan_sqli(formated_target, domain)
             idor = scan_idor(formated_target, domain)
             xss =  scan_xss(formated_target, domain)
+            csrf = scan_csrf(formated_target, domain)
             if args.report:
                 if not os.path.exists(report_path):
                     print(f"[!][!][XXX] ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
@@ -77,6 +79,7 @@ if __name__ == "__main__":
                 update_report(report_path, "sqli_scan", {"sqli_tests": sqli})
                 update_report(report_path, "idor_scan", {"idor_tests": idor})
                 update_report(report_path, "xss_scan", {"xss_tests": xss})
+                update_report(report_path, "csrf_scan", {"csrf_tests": csrf})
                     
         except Exception as e:
             print(f"[!][!][XXX] ERREUR lors du scan des ports : {e}\n")
@@ -160,6 +163,17 @@ if __name__ == "__main__":
                     update_report(report_path, "xss_scan", {"xss_tests": result})
             except Exception as e:
                 print(f"[!][!][XXX] ERREUR lors du scan XSS : {e}\n")
+        
+        if args.csrf:
+            try:
+                result = scan_csrf(args.target, formated_target)
+                if args.report:
+                    if not os.path.exists(report_path):
+                        print(f"[!][!][XXX] ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
+                    
+                    update_report(report_path, "csrf_scan", {"csrf_tests": result})
+            except Exception as e:
+                print(f"[!][!][XXX] ERREUR lors du scan CSRF : {e}\n")
             
     else:
         print("[!][!][XXX] Erreur : Vous devez spécifier un mode de scan (--full, --ports, --headers, --lfi, --sqli)")
