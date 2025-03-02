@@ -87,7 +87,7 @@ if __name__ == "__main__":
         # Finalisation
         finalize_report(report_path)
         
-    elif args.ports or args.headers or args.lfi or args.sqli or args.idor or args.xss:
+    elif args.ports or args.headers or args.lfi or args.sqli or args.idor or args.xss  or args.csrf:
         
         if args.ports:
             try:
@@ -176,7 +176,7 @@ if __name__ == "__main__":
                 print(f"[!][!][XXX] ERREUR lors du scan CSRF : {e}\n")
             
     else:
-        print("[!][!][XXX] Erreur : Vous devez spécifier un mode de scan (--full, --ports, --headers, --lfi, --sqli)")
+        print("\n[!][!][XXX] Erreur : Vous devez spécifier un mode de scan (--full, --ports, --headers, --lfi, --sqli)")
         parser.print_help()
         exit(1)
 

@@ -149,10 +149,139 @@ XSS_PAYLOADS = [
 ]
 
 
-def find_xss_in_urls(target):
-    """Recherche des paramètres potentiellement vulnérables à XSS dans les URLs du site"""
-    session = requests.Session()
-    session.verify = False  # Ignore les erreurs SSL
+# def find_xss_in_urls(target):
+#     """Recherche des paramètres potentiellement vulnérables à XSS dans les URLs du site"""
+#     session = requests.Session()
+#     session.verify = False  # Ignore les erreurs SSL
+#     try:
+#         response = session.get(target, timeout=5)
+#         soup = BeautifulSoup(response.text, 'lxml')
+        
+#         detected_params = []
+#         for link in soup.find_all('a', href=True):
+#             url = link['href']
+#             if "?" in url and "=" in url:  # Vérifie si l'URL contient des paramètres
+#                 full_url = urljoin(target, url)
+#                 detected_params.append(url)
+#                 print(f"------[!!!] {full_url}")
+        
+#         return detected_params
+#     except requests.exceptions.RequestException as e:
+#         print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+#         return []
+
+# def find_xss_in_forms(target):
+#     """Recherche des formulaires pouvant être vulnérables à XSS"""
+#     session = requests.Session()
+#     session.verify = False
+#     try:
+#         response = session.get(target, timeout=5)
+#         soup = BeautifulSoup(response.text, 'lxml')
+        
+#         detected_forms = []
+#         for form in soup.find_all('form'):
+#             action = form.attrs.get("action").strip()
+#             method = form.attrs.get("method", "get").lower()
+#             inputs = [input_tag.attrs.get("name") for input_tag in form.find_all("input") if input_tag.attrs.get("name")]
+            
+#             full_action_url = urljoin(target, action) if action else target
+            
+#             if inputs:
+#                 detected_forms.append({"action": full_action_url, "method": method, "inputs": inputs})
+        
+#         return detected_forms
+#     except requests.exceptions.RequestException as e:
+#         print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+#         return []
+
+# def find_xss_in_cookies(target):
+#     """Recherche des cookies susceptibles d'être vulnérables à XSS"""
+#     try:
+#         response = requests.get(target, timeout=5)
+#         cookies = response.cookies.get_dict()
+        
+#         detected_cookies = {}
+#         for key, value in cookies.items():
+#             if re.search(r"\d+", value):  
+#                 detected_cookies[key] = value
+        
+#         return detected_cookies
+#     except requests.exceptions.RequestException as e:
+#         print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+#         return {}
+
+# def test_xss(target_url, param, method="get"):
+#     """Teste l'injection de payloads XSS sur un paramètre donné"""
+#     for payload in XSS_PAYLOADS:
+#         test_url = f"{target_url}&{param}={payload}" if "?" in target_url else f"{target_url}?{param}={payload}"
+
+#         try:
+#             response = requests.get(test_url, timeout=5) if method == "get" else requests.post(target_url, data={param: payload}, timeout=5)
+#             response_text = response.text.lower()
+
+#             if payload.lower() in response_text:
+#                 print(f"🔥 XSS détectée sur {test_url} !")
+#                 return {"url": test_url, "payload": payload}
+#         except requests.exceptions.RequestException as e:
+#             print(f"[!][!][XXX] Erreur lors de la requête XSS : {e}")
+
+#     return None
+    
+    
+
+# def scan_xss(target, formated_target):
+    
+#     print(f"\n\t==============Scan XSS sur -->{formated_target}<-- 🔍 ==============\n")
+    
+#     results = {"urls": [], "forms": [], "cookies": []}
+    
+#     # 1️⃣ Tester les XSS dans les URLs
+#     urls_with_params = find_xss_in_urls(target)
+#     if urls_with_params:
+#         print("[!]~] Test XSS sur les URLs...")
+#         for url in urls_with_params:
+#             parsed_url = urlparse(url)
+#             # param = url.split("=")[0].split("?")[-1]  # Extrait le nom du paramètre
+#             param = parsed_url.query.split("=")[0]
+#             result = test_xss(url, param, "get")
+#             if result:
+#                 results["urls"].append(result)
+    
+#     # 2️⃣ Tester les XSS dans les formulaires
+#     forms_with_inputs = find_xss_in_forms(target)
+#     if not forms_with_inputs:
+#         print("\n✅  Aucun formulaire détecté. Ignoré.\n")
+#         return results  # 🆕 On sort immédiatement si aucun formulaire trouvé
+#     else: 
+#         print("\n[!]~] Test XSS sur les formulaires...")
+#         for form in forms_with_inputs:
+#             action = form["action"]
+#             method = form["method"]
+#             for input_name in form["inputs"]:
+#                 result = test_xss(action, input_name, method)
+#                 if result:
+#                     results["forms"].append(result)
+                
+    
+#     # 3️⃣ Tester les XSS dans les cookies
+#     cookies_with_ids = find_xss_in_cookies(target)
+#     if cookies_with_ids:
+#         print("\n[!]~] Test XSS sur les cookies...")
+#         for cookie_name, value in cookies_with_ids.items():
+#             result = test_xss(target, cookie_name, "get")
+#             if result:
+#                 results["cookies"].append(result)
+    
+#     print("\n✅  Scan XSS terminé.\n")
+    
+#     return results
+
+
+def find_xss_in_urls(target, session=None):
+    """Recherche des paramètres potentiellement vulnérables à XSS dans les URLs du site."""
+    if not session:
+        session = requests.Session()
+    session.verify = False
     try:
         response = session.get(target, timeout=5)
         soup = BeautifulSoup(response.text, 'lxml')
@@ -160,19 +289,23 @@ def find_xss_in_urls(target):
         detected_params = []
         for link in soup.find_all('a', href=True):
             url = link['href']
-            if "?" in url and "=" in url:  # Vérifie si l'URL contient des paramètres
+            if "?" in url and "=" in url:
                 full_url = urljoin(target, url)
-                detected_params.append(url)
-                print(f"------! {full_url}")
+                parsed_url = urlparse(full_url)
+                params = parsed_url.query.split("&")
+                for param in params:
+                    name = param.split("=")[0]
+                    detected_params.append({"url": full_url, "param": name})
         
         return detected_params
     except requests.exceptions.RequestException as e:
         print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
         return []
 
-def find_xss_in_forms(target):
-    """Recherche des formulaires pouvant être vulnérables à XSS"""
-    session = requests.Session()
+def find_xss_in_forms(target, session=None):
+    """Recherche des formulaires pouvant être vulnérables à XSS."""
+    if not session:
+        session = requests.Session()
     session.verify = False
     try:
         response = session.get(target, timeout=5)
@@ -180,128 +313,85 @@ def find_xss_in_forms(target):
         
         detected_forms = []
         for form in soup.find_all('form'):
-            action = form.attrs.get("action").strip()
+            action = form.attrs.get("action", "").strip()
             method = form.attrs.get("method", "get").lower()
-            inputs = [input_tag.attrs.get("name") for input_tag in form.find_all("input") if input_tag.attrs.get("name")]
+            inputs = {input_tag.attrs.get("name"): input_tag.attrs.get("value", "") for input_tag in form.find_all("input") if input_tag.attrs.get("name")}
             
             full_action_url = urljoin(target, action) if action else target
-            
-            if inputs:
-                detected_forms.append({"action": full_action_url, "method": method, "inputs": inputs})
+            detected_forms.append({"action": full_action_url, "method": method, "inputs": inputs})
         
         return detected_forms
     except requests.exceptions.RequestException as e:
         print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
         return []
 
-def find_xss_in_cookies(target):
-    """Recherche des cookies susceptibles d'être vulnérables à XSS"""
+def find_xss_in_cookies(target, session=None):
+    """Recherche des cookies susceptibles d'être vulnérables à XSS."""
+    if not session:
+        session = requests.Session()
+    session.verify = False
     try:
-        response = requests.get(target, timeout=5)
+        response = session.get(target, timeout=5)
         cookies = response.cookies.get_dict()
-        
-        detected_cookies = {}
-        for key, value in cookies.items():
-            if re.search(r"\d+", value):  
-                detected_cookies[key] = value
-        
-        return detected_cookies
+        return cookies
     except requests.exceptions.RequestException as e:
         print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
         return {}
 
-def test_xss(target_url, param, method="get"):
-    """Teste l'injection de payloads XSS sur un paramètre donné"""
-    # for payload in XSS_PAYLOADS:
-    #     test_url = f"{target_url}&{param}={payload}" if "?" in target_url else f"{target_url}?{param}={payload}"
-        
-    #     try:
-    #         response = requests.get(test_url, timeout=5) if method == "get" else requests.post(target_url, data={param: payload}, timeout=5)
-    #         response_text = response.text.lower()
-            
-    #         if payload.lower() in response_text:
-    #             print(f"🔥 XSS détectée sur {test_url} !")
-    #             return {"url": test_url, "payload": payload}
-    #     except requests.exceptions.RequestException as e:
-    #         print(f"[!][!][XXX] Erreur lors de la requête XSS : {e}")
-    
-    # return None
-    # for payload in XSS_PAYLOADS:
-    #     test_url = f"{target_url}&{param}={payload}" if "?" in target_url else f"{target_url}?{param}={payload}"
-        
-    #     try:
-    #         response = requests.get(test_url, timeout=5) if method == "get" else requests.post(target_url, data={param: payload}, timeout=5)
-    #         response_text = response.text.lower()
-
-    #         if payload.lower() in response_text:
-    #             print(f"🔥 XSS détectée sur {test_url} !")
-    #             return {"url": test_url, "payload": payload}
-    #     except requests.exceptions.RequestException as e:
-    #         print(f"[!][!][XXX] Erreur lors de la requête XSS : {e}")
-
-    # return None
-    
-    """Teste l'injection de payloads XSS sur un paramètre donné"""
+def test_xss(target_url, param, method="get", session=None):
+    """Teste l'injection de payloads XSS sur un paramètre donné."""
+    if not session:
+        session = requests.Session()
+    session.verify = False
     for payload in XSS_PAYLOADS:
         test_url = f"{target_url}&{param}={payload}" if "?" in target_url else f"{target_url}?{param}={payload}"
-
         try:
-            response = requests.get(test_url, timeout=5) if method == "get" else requests.post(target_url, data={param: payload}, timeout=5)
+            if method == "get":
+                response = session.get(test_url, timeout=5)
+            else:
+                response = session.post(target_url, data={param: payload}, timeout=5)
             response_text = response.text.lower()
-
             if payload.lower() in response_text:
-                print(f"🔥 XSS détectée sur {test_url} !")
+                print(f" XSS détectée sur {test_url} avec le payload : {payload}")
                 return {"url": test_url, "payload": payload}
         except requests.exceptions.RequestException as e:
             print(f"[!][!][XXX] Erreur lors de la requête XSS : {e}")
-
     return None
-    
-    
 
-def scan_xss(target, formated_target):
-    
-    print(f"\n\t==============Scan XSS sur -->{formated_target}<-- 🔍 ==============\n")
-    
+def scan_xss(target, formated_target, session=None):
+    """Effectue un scan XSS sur le site."""
+    print(f"\n\t==============Scan XSS sur -->{formated_target}<--  ==============\n")
     results = {"urls": [], "forms": [], "cookies": []}
     
     # 1️⃣ Tester les XSS dans les URLs
-    urls_with_params = find_xss_in_urls(target)
+    urls_with_params = find_xss_in_urls(target, session)
     if urls_with_params:
         print("[!]~] Test XSS sur les URLs...")
-        for url in urls_with_params:
-            parsed_url = urlparse(url)
-            # param = url.split("=")[0].split("?")[-1]  # Extrait le nom du paramètre
-            param = parsed_url.query.split("=")[0]
-            result = test_xss(url, param, "get")
+        for item in urls_with_params:
+            result = test_xss(item["url"], item["param"], "get", session)
             if result:
                 results["urls"].append(result)
     
     # 2️⃣ Tester les XSS dans les formulaires
-    forms_with_inputs = find_xss_in_forms(target)
-    if not forms_with_inputs:
-        print("\n✅  Aucun formulaire détecté. Ignoré.")
-        return results  # 🆕 On sort immédiatement si aucun formulaire trouvé
-    else: 
+    forms_with_inputs = find_xss_in_forms(target, session)
+    if forms_with_inputs:
         print("\n[!]~] Test XSS sur les formulaires...")
         for form in forms_with_inputs:
             action = form["action"]
             method = form["method"]
-            for input_name in form["inputs"]:
-                result = test_xss(action, input_name, method)
+            for input_name, input_value in form["inputs"].items():
+                result = test_xss(action, input_name, method, session)
                 if result:
                     results["forms"].append(result)
-                
-    
+                    
     # 3️⃣ Tester les XSS dans les cookies
-    cookies_with_ids = find_xss_in_cookies(target)
-    if cookies_with_ids:
+    cookies = find_xss_in_cookies(target, session)
+    if cookies:
         print("\n[!]~] Test XSS sur les cookies...")
-        for cookie_name, value in cookies_with_ids.items():
-            result = test_xss(target, cookie_name, "get")
+        for cookie_name, cookie_value in cookies.items():
+            result = test_xss(target, cookie_name, "get", session)
             if result:
                 results["cookies"].append(result)
     
-    print("\n✅  Scan XSS terminé.\n")
-    
+    print("\n✅ Scan XSS terminé.\n")
     return results

@@ -1,0 +1,17 @@
+{
+    "target": "owasp.org",
+    "scan_date": "2025-03-02 22:59:58",
+    "results": {
+        "csrf_scan": {
+            "csrf_tests": {
+                "forms": [],
+                "requests": [
+                    {
+                        "url": "https://owasp.org/www-project-webgoat/",
+                        "csrf_vulnerable": true
+                    }
+                ]
+            }
+        }
+    }
+}
