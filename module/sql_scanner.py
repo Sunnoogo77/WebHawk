@@ -78,13 +78,14 @@ def scan_sqli(target, formated_target):
         try:
             # response = requests.get(test_url, timeout=5)
             response = session.get(test_url, timeout=5)
-            print(f"--------------------| {test_url}")
+            print(f"[!]~] Test de l'URL SQLi : {test_url}")
             response_text = response.text.lower()
             
             if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
-                print(f"🔥 SQLi détectée dans l'URL : {test_url}")
+                print(f"[!!!]🔥 SQLi détectée dans l'URL : {test_url}")
                 vuln_found = True
                 sqli_results[test_url] = "VULNERABLE (URL Injection)"
+                
         
         except requests.exceptions.RequestException as e:
             print(f"[!][!][XXX] Erreur lors de la requête URL SQLi : {e}")
@@ -123,7 +124,7 @@ def scan_sqli(target, formated_target):
                         response_text = response.text.lower()
                         
                         if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
-                            print(f"🔥 SQLi détectée dans le formulaire `{field_name}` avec : {payload}")
+                            print(f"[!!!]🔥 SQLi détectée dans le formulaire `{field_name}` avec : {payload}")
                             vuln_found = True
                             sqli_results[target_url] = f"VULNERABLE - Champ {field_name}"
                         

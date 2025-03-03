@@ -32,14 +32,14 @@ COMMON_PORTS = {
 
 
 def scan_port(target, port):
-    
+    print(f"[+] Tentative de connexion sur le port {port}...")
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.settimeout(1)
             result = sock.connect_ex((target, port))
             if result == 0:
                 service = COMMON_PORTS.get(port, "Unknown")
-                print(f"Port {port} ({service}) is open")
+                print(f"\t[+] Port {port} ({service}) est ouvert")
                 return port, service
     except Exception as e:
         pass

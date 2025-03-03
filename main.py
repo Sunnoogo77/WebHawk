@@ -12,6 +12,8 @@ from module.sql_scanner import scan_sqli
 from module.idor_scanner import scan_idor
 from module.xss_scanner import scan_xss
 from module.csrf_scanner import scan_csrf
+# from module.ssrf_scanner import scan_ssrf
+from module.ssrf_scanner import scan_ssrf
 
 from core.utils import normalize_target
 from core.report_manager import update_report
@@ -35,6 +37,7 @@ if __name__ == "__main__":
     parser.add_argument("--idor", action="store_true", help="Scan IDOR")
     parser.add_argument("--xss", action="store_true", help="Scan des vulnérabilités XSS")
     parser.add_argument("--csrf", action="store_true", help="Scan des vulnérabilité CSRF")
+    parser.add_argument("--ssrf", action="store_true", help="Scan des vulnérabilité SSRF")
     
     
     parser.add_argument("--ignore-ssl", action="store_true", help="Ignorer les erreurs SSL")
@@ -65,6 +68,7 @@ if __name__ == "__main__":
             idor = scan_idor(formated_target, domain)
             xss =  scan_xss(formated_target, domain)
             csrf = scan_csrf(formated_target, domain)
+            ssrf = scan_ssrf(formated_target, domain)
             if args.report:
                 if not os.path.exists(report_path):
                     print(f"[!][!][XXX] ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
@@ -80,6 +84,7 @@ if __name__ == "__main__":
                 update_report(report_path, "idor_scan", {"idor_tests": idor})
                 update_report(report_path, "xss_scan", {"xss_tests": xss})
                 update_report(report_path, "csrf_scan", {"csrf_tests": csrf})
+                update_report(report_path, "ssrf_scan", {"ssrf_tests": ssrf})
                     
         except Exception as e:
             print(f"[!][!][XXX] ERREUR lors du scan des ports : {e}\n")
@@ -87,7 +92,7 @@ if __name__ == "__main__":
         # Finalisation
         finalize_report(report_path)
         
-    elif args.ports or args.headers or args.lfi or args.sqli or args.idor or args.xss  or args.csrf:
+    elif args.ports or args.headers or args.lfi or args.sqli or args.idor or args.xss  or args.csrf or args.ssrf:
         
         if args.ports:
             try:
@@ -174,6 +179,18 @@ if __name__ == "__main__":
                     update_report(report_path, "csrf_scan", {"csrf_tests": result})
             except Exception as e:
                 print(f"[!][!][XXX] ERREUR lors du scan CSRF : {e}\n")
+        
+        if args.ssrf:
+            try:
+                result = scan_ssrf(args.target, formated_target)
+                if args.report:
+                    if not os.path.exists(report_path):
+                        print(f"[!][!][XXX] ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
+                    
+                    update_report(report_path, "scan_ssrf", {"ssrf_tests": result})
+            except Exception as e:
+                print(f"[!][!][XXX] ERREUR lors du scan SSRF : {e}\n")
+                
             
     else:
         print("\n[!][!][XXX] Erreur : Vous devez spécifier un mode de scan (--full, --ports, --headers, --lfi, --sqli)")

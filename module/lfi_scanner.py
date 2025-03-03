@@ -50,7 +50,7 @@ def scan_lfi(target, formated_target):
     for payload in LFI_PAYLOADS:
         for extra in ["", "%00"]:
             url = f"{target}/?page={payload}{extra}"
-            
+            print(f"[~] Test de l'URL : {url}")
             session = requests.Session()
             session.verify = False
             try:
@@ -60,7 +60,8 @@ def scan_lfi(target, formated_target):
                 response_text = response.text.lower()
                 
                 if any(signature in response_text for signature in LFI_SIGNATURES):
-                    print(f"🔥 LFI détectée : {url}")
+                    print(f"[!!!]🔥 LFI détectée dans l'URL : {url}")
+                    # print(f"🔥 LFI détectée : {url}")
                     print(f"\t----------> {response.text[:500]}...\n")
                     vuln_found = True
                     findings[url] = "VULNERABLE"
