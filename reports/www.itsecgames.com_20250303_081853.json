@@ -1,0 +1,113 @@
+{
+    "target": "www.itsecgames.com",
+    "scan_date": "2025-03-03 08:18:53",
+    "results": {
+        "port_scan": {
+            "open_ports": [
+                [
+                    22,
+                    "SSH"
+                ],
+                [
+                    80,
+                    "HTTP"
+                ],
+                [
+                    443,
+                    "HTTPS"
+                ]
+            ]
+        },
+        "headers_scan": {
+            "headers_received": {
+                "Date": "Mon, 03 Mar 2025 08:18:55 GMT",
+                "Server": "Apache",
+                "Last-Modified": "Wed, 09 Feb 2022 13:14:08 GMT",
+                "ETag": "\"e43-5d7959bd3c800-gzip\"",
+                "Accept-Ranges": "bytes",
+                "Vary": "Accept-Encoding",
+                "Content-Encoding": "gzip",
+                "Content-Length": "1482",
+                "Keep-Alive": "timeout=15, max=100",
+                "Connection": "Keep-Alive",
+                "Content-Type": "text/html"
+            },
+            "missing_headers": [
+                "Strict-Transport-Security",
+                "X-Frame-Options",
+                "X-Content-Type-Options",
+                "X-XSS-Protection",
+                "Content-Security-Policy",
+                "Referrer-Policy",
+                "Permissions-Policy"
+            ],
+            "misconfigured_headers": []
+        },
+        "lfi_scan": {
+            "lfi_tests": {
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/passwd": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/passwd%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/shadow": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/shadow%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/hostname": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/hostname%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/issue": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/issue%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/motd": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/motd%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/group": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/group%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/hosts": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/hosts%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/apache2/apache2.conf": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/apache2/apache2.conf%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/httpd/httpd.conf": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../etc/httpd/httpd.conf%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../var/www/html/config.php": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../var/www/html/config.php%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../proc/self/environ": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../proc/self/environ%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../proc/self/cmdline": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../proc/self/cmdline%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../boot.ini": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../boot.ini%00": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../Windows/windows.ini": "Non Vuln\u00e9rable",
+                "http://www.itsecgames.com//?page=../../../../../../../../../../../../../../../../Windows/windows.ini%00": "Non Vuln\u00e9rable"
+            }
+        },
+        "sqli_scan": {
+            "sqli_tests": {}
+        },
+        "idor_scan": {
+            "idor_tests": {
+                "urls_with_ids": [
+                    "download.htm",
+                    "./downloads/vulnerabilities.txt",
+                    "./downloads/bWAPP_intro.pdf"
+                ],
+                "api_detected_ids": [],
+                "cookies_headers_with_ids": {},
+                "exploitable_urls": []
+            }
+        },
+        "xss_scan": {
+            "xss_tests": {
+                "urls": [],
+                "forms": [],
+                "cookies": []
+            }
+        },
+        "csrf_scan": {
+            "csrf_tests": {
+                "forms": [],
+                "requests": []
+            }
+        },
+        "ssrf_scan": {
+            "ssrf_tests": {
+                "urls": [],
+                "forms": []
+            }
+        }
+    }
+}

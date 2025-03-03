@@ -38,6 +38,8 @@ if __name__ == "__main__":
     parser.add_argument("--xss", action="store_true", help="Scan des vulnérabilités XSS")
     parser.add_argument("--csrf", action="store_true", help="Scan des vulnérabilité CSRF")
     parser.add_argument("--ssrf", action="store_true", help="Scan des vulnérabilité SSRF")
+    parser.add_argument("--rce", action="store_true", help="Scan des vulnérabilité RCE")
+    parser.add_argument("--dirs", action="store_true", help="Scan des répertoires cachés et fichiers sensibles")
     
     
     parser.add_argument("--ignore-ssl", action="store_true", help="Ignorer les erreurs SSL")
@@ -69,6 +71,8 @@ if __name__ == "__main__":
             xss =  scan_xss(formated_target, domain)
             csrf = scan_csrf(formated_target, domain)
             ssrf = scan_ssrf(formated_target, domain)
+            ssrf = scan_rce(formated_target, domain)
+            ssrf = scan_dir(formated_target, domain)
             if args.report:
                 if not os.path.exists(report_path):
                     print(f"[!][!][XXX] ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
@@ -85,6 +89,8 @@ if __name__ == "__main__":
                 update_report(report_path, "xss_scan", {"xss_tests": xss})
                 update_report(report_path, "csrf_scan", {"csrf_tests": csrf})
                 update_report(report_path, "ssrf_scan", {"ssrf_tests": ssrf})
+                update_report(report_path, "rce_scan", {"rce_tests": rce})
+                update_report(report_path, "dir_scan", {"dir_tests": dir})
                     
         except Exception as e:
             print(f"[!][!][XXX] ERREUR lors du scan des ports : {e}\n")
@@ -92,7 +98,7 @@ if __name__ == "__main__":
         # Finalisation
         finalize_report(report_path)
         
-    elif args.ports or args.headers or args.lfi or args.sqli or args.idor or args.xss  or args.csrf or args.ssrf:
+    elif args.ports or args.headers or args.lfi or args.sqli or args.idor or args.xss  or args.csrf or args.ssrf or args.rce or args.dirs:
         
         if args.ports:
             try:
@@ -190,7 +196,24 @@ if __name__ == "__main__":
                     update_report(report_path, "scan_ssrf", {"ssrf_tests": result})
             except Exception as e:
                 print(f"[!][!][XXX] ERREUR lors du scan SSRF : {e}\n")
-                
+        
+        if args.rce:
+            try:
+                result = scan_rce(args.target, formated_target)
+                if args.report:
+                    update_report(report_path, "rec_scan", {"rce_found": result})
+            except Exception as e:
+                print(f"❌ ERREUR lors du scan RCE : {e}\n")
+        
+        if args.dirs:
+            try:
+                result = scan_dir(args.target, formated_target)
+                if args.report:
+                    update_report(report_path, "dir_scan", {"directories_found": result})
+            except Exception as e:
+                print(f"❌ ERREUR lors du scan des répertoires : {e}\n")
+
+
             
     else:
         print("\n[!][!][XXX] Erreur : Vous devez spécifier un mode de scan (--full, --ports, --headers, --lfi, --sqli)")
