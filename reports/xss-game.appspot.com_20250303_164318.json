@@ -1,0 +1,110 @@
+{
+    "target": "xss-game.appspot.com",
+    "scan_date": "2025-03-03 16:43:18",
+    "results": {
+        "port_scan": {
+            "open_ports": [
+                [
+                    80,
+                    "HTTP"
+                ],
+                [
+                    443,
+                    "HTTPS"
+                ]
+            ]
+        },
+        "headers_scan": {
+            "headers_received": {
+                "Content-Type": "text/html; charset=utf-8",
+                "Cache-Control": "no-cache",
+                "X-XSS-Protection": "0",
+                "X-Cloud-Trace-Context": "25c665aaa093971795f040c83909bbb5",
+                "Date": "Mon, 03 Mar 2025 16:43:19 GMT",
+                "Server": "Google Frontend",
+                "Content-Length": "508",
+                "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+            },
+            "missing_headers": [
+                "Strict-Transport-Security",
+                "X-Frame-Options",
+                "X-Content-Type-Options",
+                "Content-Security-Policy",
+                "Referrer-Policy",
+                "Permissions-Policy"
+            ],
+            "misconfigured_headers": [
+                [
+                    "X-XSS-Protection",
+                    "0",
+                    "1; mode=block"
+                ]
+            ]
+        },
+        "lfi_scan": {
+            "lfi_tests": {}
+        },
+        "sqli_scan": {
+            "sqli_tests": {}
+        },
+        "idor_scan": {
+            "idor_tests": {
+                "urls_with_ids": [],
+                "api_detected_ids": [],
+                "cookies_headers_with_ids": {},
+                "exploitable_urls": []
+            }
+        },
+        "xss_scan": {
+            "xss_tests": {
+                "urls": [],
+                "forms": [
+                    {
+                        "url": "https://xss-game.appspot.com/level1/frame?query=<script>alert('XSS')</script>",
+                        "payload": "<script>alert('XSS')</script>"
+                    }
+                ],
+                "cookies": []
+            }
+        },
+        "csrf_scan": {
+            "csrf_tests": {
+                "forms": [
+                    {
+                        "form_action": "https://xss-game.appspot.com/level1/frame",
+                        "csrf_protected": false,
+                        "poc": "\n        <html>\n        <body>\n        <form action=\"https://xss-game.appspot.com/level1/frame\" method=\"get\">\n                <input type=\"hidden\" name=\"query\" value=\"Enter query here...\">\n\n            <input type=\"submit\" value=\"Submit\">\n        </form>\n        <script>document.forms[0].submit();</script>\n        </body>\n        </html>\n    "
+                    }
+                ],
+                "requests": [
+                    {
+                        "url": "https://xss-game.appspot.com/level1/frame",
+                        "csrf_vulnerable": true
+                    }
+                ]
+            }
+        },
+        "ssrf_scan": {
+            "ssrf_tests": {
+                "urls": [],
+                "forms": []
+            }
+        },
+        "rce_scan": {
+            "rce_tests": {
+                "urls": [],
+                "forms": [
+                    {
+                        "url": "https://xss-game.appspot.com/level1/frame?query=echo RCE_TEST",
+                        "rce_exploitable": true,
+                        "payload": "echo RCE_TEST",
+                        "response_time": 0.36089468002319336
+                    }
+                ]
+            }
+        },
+        "dir_scan": {
+            "dir_tests": []
+        }
+    }
+}

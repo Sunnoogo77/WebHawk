@@ -2,6 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
+from pprint import pprint
 
 # Payloads XSS pour tester la vulnérabilité
 XSS_PAYLOADS = [
@@ -300,7 +301,8 @@ def find_xss_in_urls(target, session=None):
         
         return detected_params
     except requests.exceptions.RequestException as e:
-        print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+        # print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+        # print(f"[!][!][XXX] Err")
         return []
 
 def find_xss_in_forms(target, session=None):
@@ -325,7 +327,8 @@ def find_xss_in_forms(target, session=None):
         
         return detected_forms
     except requests.exceptions.RequestException as e:
-        print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+        # print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+        # print(f"[!][!][XXX] Err")
         return []
 
 def find_xss_in_cookies(target, session=None):
@@ -340,7 +343,8 @@ def find_xss_in_cookies(target, session=None):
         print(f"[!!!] Cookies : {cookies}")
         return cookies
     except requests.exceptions.RequestException as e:
-        print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+        # print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+        # print(f"[!][!][XXX] Err")
         return {}
 
 def test_xss(target_url, param, method="get", session=None):
@@ -362,7 +366,9 @@ def test_xss(target_url, param, method="get", session=None):
                 print(f"[!!!]🔥 XSS détectée sur {test_url} !")
                 return {"url": test_url, "payload": payload}
         except requests.exceptions.RequestException as e:
-            print(f"[!][!][XXX] Erreur lors de la requête XSS : {e}")
+            # print(f"[!][!][XXX] Erreur lors de la requête XSS : {e}")
+            # print(f"[!][!][XXX] Err")
+            pass
     return None
 
 def scan_xss(target, formated_target, session=None):
@@ -400,5 +406,13 @@ def scan_xss(target, formated_target, session=None):
             if result:
                 results["cookies"].append(result)
     
+    
+    print("[!]~]Résultats du scan XSS :")
+    # print(f"[!]~]URLs vulnérables : {results['urls']}")
+    # print(f"[!]~]Formulaires vulnérables : {results['forms']}")
+    # print(f"[!]~]Cookies vulnérables : {results['cookies']}")
+    print("[!][~]")
+    print("[!][~]")
+    pprint(results)
     print("\n✅ Scan XSS terminé.\n")
     return results

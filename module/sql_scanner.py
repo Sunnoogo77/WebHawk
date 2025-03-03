@@ -82,13 +82,15 @@ def scan_sqli(target, formated_target):
             response_text = response.text.lower()
             
             if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
-                print(f"[!!!]🔥 SQLi détectée dans l'URL : {test_url}")
+                print(f"[!!!] SQLi détectée dans l'URL : {test_url}")
                 vuln_found = True
                 sqli_results[test_url] = "VULNERABLE (URL Injection)"
                 
         
         except requests.exceptions.RequestException as e:
-            print(f"[!][!][XXX] Erreur lors de la requête URL SQLi : {e}")
+            # print(f"[!][!][XXX] Erreur lors de la requête URL SQLi : {e}")
+            # print(f"[!][!][XXX] Err")
+            pass
     
     forms = find_forms(target)
     
@@ -124,13 +126,15 @@ def scan_sqli(target, formated_target):
                         response_text = response.text.lower()
                         
                         if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
-                            print(f"[!!!]🔥 SQLi détectée dans le formulaire `{field_name}` avec : {payload}")
+                            print(f"[!!!] SQLi détectée dans le formulaire `{field_name}` avec : {payload}")
                             vuln_found = True
                             sqli_results[target_url] = f"VULNERABLE - Champ {field_name}"
                         
                     
                     except requests.exceptions.RequestException as e:
-                        print(f"[!][!][XXX] Erreur lors de la requête : {e}")
+                        # print(f"[!][!][XXX] Erreur lors de la requête : {e}")
+                        # print(f"[!][!][XXX] Err")
+                        pass
     
     if not vuln_found:
         print("\n✅  Aucun SQLi détecté.\n")

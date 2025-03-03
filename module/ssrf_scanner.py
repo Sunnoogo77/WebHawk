@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 import re
 
+from pprint import pprint
+
 #  Liste des paramètres suspects liés aux URL (potentiellement vulnérables à SSRF)
 SSRF_KEYS = [
     "url", "redirect", "next", "dest", "destination", "link", "site", "path",
@@ -49,10 +51,11 @@ def find_ssrf_in_urls(target, session=None):
                     name = param.split("=")[0]
                     if name in SSRF_KEYS:
                         detected_params.append({"url": urljoin(target, url), "param": name})
-                        print(f" SSRF potentiel détecté dans {urljoin(target, url)}")
+                        print(f"[!!!] SSRF potentiel détecté dans {urljoin(target, url)}")
+                        # print(f" SSRF potentiel détecté dans {urljoin(target, url)}")
         return detected_params
     except requests.exceptions.RequestException as e:
-        print(f"❌ Erreur lors de la requête : {e}\n")
+        # print(f"❌ Erreur lors de la requête : {e}\n")
         return []
 
 def find_ssrf_in_forms(target, session=None):
@@ -75,7 +78,7 @@ def find_ssrf_in_forms(target, session=None):
                 print(f"[!!!] SSRF potentiel détecté dans {urljoin(target, action)}")
         return detected_forms
     except requests.exceptions.RequestException as e:
-        print(f"❌ Erreur lors de la requête : {e}\n")
+        # print(f"❌ Erreur lors de la requête : {e}\n")
         return []
 
 def test_ssrf(target_url, param, method="get", session=None):
@@ -93,13 +96,16 @@ def test_ssrf(target_url, param, method="get", session=None):
                 response = session.post(target_url, data={param: test_url}, timeout=5, allow_redirects=False)
             
             if "root:x:0:0" in response.text or "EC2Metadata" in response.text or "127.0.0.1" in response.text or "ComputeMetadata" in response.text or "100.100.100.200" in response.text:
-                print(f" SSRF détectée sur {test_payload}!")
+                print(f"[!!!] SSRF détectée sur {test_payload}!")
+                # print(f" SSRF détectée sur {test_payload}!")
                 return {"url": test_payload, "ssrf_exploitable": True}
             if response.status_code == 301 or response.status_code == 302:
-                print(f"⚠️ Redirection détectée sur {test_payload} (Code {response.status_code}). Vérifiez manuellement.")
+                print(f"[!]~] Redirection détectée sur {test_payload} (Code {response.status_code}). Vérifiez manuellement.")
+                # print(f"⚠️ Redirection détectée sur {test_payload} (Code {response.status_code}). Vérifiez manuellement.")
                 return {"url": test_payload, "ssrf_exploitable": "Redirection"}
         except requests.exceptions.RequestException as e:
-            print(f"❌ Erreur lors de la requête SSRF : {e}")
+            # print(f"❌ Erreur lors de la requête SSRF : {e}")
+            pass
     return None
 
 def scan_ssrf(target, formated_target, session=None):
@@ -110,7 +116,8 @@ def scan_ssrf(target, formated_target, session=None):
     # 1️⃣ Recherche de paramètres SSRF dans les URLs
     urls_with_ssrf = find_ssrf_in_urls(target, session)
     if urls_with_ssrf:
-        print(" Test SSRF sur les URLs...")
+        print("[!]~] Test SSRF sur les URLs...")
+        # print(" Test SSRF sur les URLs...")
         for item in urls_with_ssrf:
             result = test_ssrf(item["url"], item["param"], "get", session)
             if result:
@@ -119,7 +126,8 @@ def scan_ssrf(target, formated_target, session=None):
     # 2️⃣ Recherche de champs SSRF dans les formulaires
     forms_with_ssrf = find_ssrf_in_forms(target, session)
     if forms_with_ssrf:
-        print("\n Test SSRF sur les formulaires...")
+        print("[!]~] Test SSRF sur les formulaires...")
+        # print("\n Test SSRF sur les formulaires...")
         for form in forms_with_ssrf:
             action = form["action"]
             method = form["method"]
@@ -128,5 +136,25 @@ def scan_ssrf(target, formated_target, session=None):
                 if result:
                     results["forms"].append(result)
     
+    
+    if results["urls"]:
+        print("[+] Résultats des tests SSRF sur les URLs :")
+        for result in results["urls"]:
+            print(f" - URL: {result['url']}, Exploitable: {result['ssrf_exploitable']}")
+    else:
+        print("[-] Aucun paramètre SSRF détecté dans les URLs.")
+    
+    if results["forms"]:
+        print("[+] Résultats des tests SSRF sur les formulaires :")
+        for result in results["forms"]:
+            print(f" - Form Action: {result['url']}, Exploitable: {result['ssrf_exploitable']}")
+    else:
+        print("[-] Aucun champ SSRF détecté dans les formulaires.")
+  
+    print("[!][~]")
+    print("[!][~]")
+    pprint(results)
+    
     print("\n✅ Scan SSRF terminé.\n")
+      
     return results

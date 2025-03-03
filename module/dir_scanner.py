@@ -36,12 +36,14 @@ def scan_path(session, target, path):
     """Scan un répertoire ou un fichier."""
     url = urljoin(target, path)
     try:
+        print(f"[~] Test de l'URL : {url}")
         response = session.head(url, timeout=5, allow_redirects=True)
         if response.status_code == 200:
             if path.endswith(tuple(SENSITIVE_FILES)):
+                
                 response = session.get(url, timeout=5, allow_redirects=True)
                 if any(keyword in response.text.lower() for keyword in SENSITIVE_KEYWORDS):
-                    return f" Fichier sensible trouvé (avec contenu sensible) : {url}"
+                    return f"Fichier sensible trouvé (avec contenu sensible) : {url}"
                 else:
                     return f"⚠️ Fichier sensible trouvé : {url}"
             else:
@@ -49,12 +51,13 @@ def scan_path(session, target, path):
         elif response.status_code == 403:
             return f"⚠️ Trouvé (interdit) : {url} ({response.status_code})"
     except requests.exceptions.RequestException as e:
-        return f"❌ Erreur lors de la requête : {url} - {e}"
+        # print(f"[-][X] ERR")
+        return None
     return None
 
-def scan_directories(target, use_threads=True):
+def scan_dir(target, formated_target, use_threads=True):
     """Scan les répertoires et fichiers sensibles sur un serveur web."""
-    print(f"\n\t==============Scan Directory Traversal sur --> {target} <--  ==============\n")
+    print(f"\n\t==============Scan Directory Traversal sur --> {formated_target} <--  ==============\n")
 
     found_paths = []
     session = requests.Session()
@@ -71,21 +74,30 @@ def scan_directories(target, use_threads=True):
             paths_to_scan.append(file + ext)
 
     if use_threads:
+        print("[!][~] Utilisation de threads pour le scan...")
+        print("[!][~]...")
+        
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             results = [executor.submit(scan_path, session, target, path) for path in paths_to_scan]
             for future in concurrent.futures.as_completed(results):
                 result = future.result()
                 if result:
                     found_paths.append(result)
-                    print(result)
+                    print(f"[+] {result}")
+                    # print(result)
     else:
         for path in paths_to_scan:
             result = scan_path(session, target, path)
             if result:
                 found_paths.append(result)
-                print(result)
+                print(f"[+] {result}")
+                # print(result)
 
     if not found_paths:
         print("\n✅ Aucun répertoire ou fichier sensible trouvé.")
 
+    # print("[!][~]")
+    # print("[!][~]")
+    # for items in found_paths:
+    #     print(f"[!][~][+]{items}")
     return found_paths

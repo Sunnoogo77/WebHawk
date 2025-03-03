@@ -60,16 +60,20 @@ def scan_lfi(target, formated_target):
                 response_text = response.text.lower()
                 
                 if any(signature in response_text for signature in LFI_SIGNATURES):
-                    print(f"[!!!]🔥 LFI détectée dans l'URL : {url}")
+                    print(f"[!!!] LFI détectée dans l'URL : {url}")
                     # print(f"🔥 LFI détectée : {url}")
-                    print(f"\t----------> {response.text[:500]}...\n")
+                    print(f"[!!!] Contenu reçu : {response.text[:500]}...")
+                    # print(f"\t----------> {response.text[:500]}...\n")
                     vuln_found = True
                     findings[url] = "VULNERABLE"
                 else:
-                    findings[url] = "Non Vulnérable"
+                    # findings[url] = "Non Vulnérable"
+                    pass
                     
             except requests.exceptions.RequestException as e:
-                print(f"[!][!][XXX] Erreur lors de la requête : {e}")
+                # print(f"[!][!][XXX] Erreur lors de la requête : {e}")
+                # print(f"[!][!][XXX] Err")
+                pass
             pass
     
     

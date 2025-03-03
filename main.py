@@ -14,6 +14,8 @@ from module.xss_scanner import scan_xss
 from module.csrf_scanner import scan_csrf
 # from module.ssrf_scanner import scan_ssrf
 from module.ssrf_scanner import scan_ssrf
+from module.rce_scanner import scan_rce
+from module.dir_scanner import scan_dir
 
 from core.utils import normalize_target
 from core.report_manager import update_report
@@ -51,7 +53,8 @@ if __name__ == "__main__":
     
     formated_target, domain = normalize_target(args.target)
     
-
+    report_path = ''
+    
     if args.report:
         report_path = initialize_report(domain) if args.report else None
         
@@ -71,8 +74,11 @@ if __name__ == "__main__":
             xss =  scan_xss(formated_target, domain)
             csrf = scan_csrf(formated_target, domain)
             ssrf = scan_ssrf(formated_target, domain)
-            ssrf = scan_rce(formated_target, domain)
-            ssrf = scan_dir(formated_target, domain)
+            rce = scan_rce(formated_target, domain)
+            dir = scan_dir(formated_target, domain)
+            
+            print(f"\n\n\t============== Fin du Scan Complet pour -->{domain}<-- 🔍 ==============\n")
+            
             if args.report:
                 if not os.path.exists(report_path):
                     print(f"[!][!][XXX] ERREUR : Le fichier de rapport {report_path} est introuvable APRES le scan !\n")
@@ -93,10 +99,12 @@ if __name__ == "__main__":
                 update_report(report_path, "dir_scan", {"dir_tests": dir})
                     
         except Exception as e:
-            print(f"[!][!][XXX] ERREUR lors du scan des ports : {e}\n")
+            # print(f"[!][!][XXX] ERREUR lors du scan des ports : {e}\n")
+            pass
 
         # Finalisation
-        finalize_report(report_path)
+        if args.report:
+            finalize_report(report_path)
         
     elif args.ports or args.headers or args.lfi or args.sqli or args.idor or args.xss  or args.csrf or args.ssrf or args.rce or args.dirs:
         
@@ -109,8 +117,9 @@ if __name__ == "__main__":
                     
                     update_report(report_path, "port_scan", {"open_ports": result})
             except Exception as e:
-                print(f"[!][!][XXX] ERREUR lors du scan des ports : {e}\n")
-        
+                # print(f"[!][!][XXX] ERREUR lors du scan des ports : {e}\n")
+                pass
+            
         if args.headers:
             try:
                 header, missing_headers, misconfigured_headers = scan_headers(formated_target)
@@ -125,7 +134,8 @@ if __name__ == "__main__":
                         "misconfigured_headers": misconfigured_headers
                         })
             except Exception as e:
-                print(f"[!][!][XXX] ERREUR lors du scan des en-têtes HTTP : {e}\n")
+                # print(f"[!][!][XXX] ERREUR lors du scan des en-têtes HTTP : {e}\n")
+                pass
         
         if args.lfi:
             try:
@@ -138,7 +148,8 @@ if __name__ == "__main__":
                     update_report(report_path, "lfi_scan", {"lfi_tests": result})
                     
             except Exception as e:
-                print(f"[!][!][XXX] ERREUR lors du scan LFI : {e}\n")
+                # print(f"[!][!][XXX] ERREUR lors du scan LFI : {e}\n")
+                pass
 
         if args.sqli:
             try:
@@ -150,7 +161,8 @@ if __name__ == "__main__":
                     
                     update_report(report_path, "sqli_scan", {"sqli_tests": result})
             except Exception as e:
-                print(f"[!][!][XXX] ERREUR lors du scan SQLI : {e}\n")
+                # print(f"[!][!][XXX] ERREUR lors du scan SQLI : {e}\n")
+                pass
         
         if args.idor:
             try:
@@ -162,7 +174,8 @@ if __name__ == "__main__":
                     
                     update_report(report_path, "idor_scan", {"idor_tests": result})
             except Exception as e:
-                print(f"[!][!][XXX] ERREUR lors du scan IDOR : {e}\n")
+                # print(f"[!][!][XXX] ERREUR lors du scan IDOR : {e}\n")
+                pass
         
         if args.xss:
             try:
@@ -173,7 +186,8 @@ if __name__ == "__main__":
                     
                     update_report(report_path, "xss_scan", {"xss_tests": result})
             except Exception as e:
-                print(f"[!][!][XXX] ERREUR lors du scan XSS : {e}\n")
+                # print(f"[!][!][XXX] ERREUR lors du scan XSS : {e}\n")
+                pass
         
         if args.csrf:
             try:
@@ -184,7 +198,8 @@ if __name__ == "__main__":
                     
                     update_report(report_path, "csrf_scan", {"csrf_tests": result})
             except Exception as e:
-                print(f"[!][!][XXX] ERREUR lors du scan CSRF : {e}\n")
+                # print(f"[!][!][XXX] ERREUR lors du scan CSRF : {e}\n")
+                pass
         
         if args.ssrf:
             try:
@@ -195,7 +210,8 @@ if __name__ == "__main__":
                     
                     update_report(report_path, "scan_ssrf", {"ssrf_tests": result})
             except Exception as e:
-                print(f"[!][!][XXX] ERREUR lors du scan SSRF : {e}\n")
+                # print(f"[!][!][XXX] ERREUR lors du scan SSRF : {e}\n")
+                pass
         
         if args.rce:
             try:
@@ -203,7 +219,8 @@ if __name__ == "__main__":
                 if args.report:
                     update_report(report_path, "rec_scan", {"rce_found": result})
             except Exception as e:
-                print(f"❌ ERREUR lors du scan RCE : {e}\n")
+                # print(f"❌ ERREUR lors du scan RCE : {e}\n")
+                pass
         
         if args.dirs:
             try:
@@ -211,12 +228,13 @@ if __name__ == "__main__":
                 if args.report:
                     update_report(report_path, "dir_scan", {"directories_found": result})
             except Exception as e:
-                print(f"❌ ERREUR lors du scan des répertoires : {e}\n")
+                # print(f"❌ ERREUR lors du scan des répertoires : {e}\n")
+                pass
 
 
             
     else:
-        print("\n[!][!][XXX] Erreur : Vous devez spécifier un mode de scan (--full, --ports, --headers, --lfi, --sqli)")
+        print("\n[!][!][XXX] Erreur : Vous devez spécifier un mode de scan (--full, --ports, --headers, --lfi, --sqli, --idor, --xss, --csrf, --ssrf, --rce, --dirs)")
         parser.print_help()
         exit(1)
 

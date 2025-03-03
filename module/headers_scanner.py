@@ -83,5 +83,6 @@ def scan_headers(target):
         return headers, missing_headers, misconfigured_headers
     
     except requests.exceptions.RequestException as e:
-        print(f"\n Erreur dlors de la requête : {e}\n")
+        # print(f"\n Erreur dlors de la requête : {e}\n")
+        pass
     

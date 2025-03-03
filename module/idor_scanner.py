@@ -1,6 +1,7 @@
 import requests
 import re
 
+from pprint import pprint
 from bs4 import BeautifulSoup
 
 IDOR_KEYS = [
@@ -91,7 +92,7 @@ def find_id_in_urls(target):
         
         return detected_ids
     except requests.exceptions.RequestException as e:
-        print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+        # print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
         return []
 
 def analyze_api_requests(target):
@@ -115,11 +116,12 @@ def analyze_api_requests(target):
         
         return detected_ids
     except requests.exceptions.RequestException as e:
-        print(f"[!][!][XXX] Erreur lors de la requête API : {e}\n")
+        # print(f"[!][!][XXX] Erreur lors de la requête API : {e}\n")
         return []
     except ValueError:
-       print("⚠️ La réponse n'est pas un JSON valide\n")
-       return []
+        print("[!][!][XXX] La réponse n'est pas un JSON valide\n")
+        #print("⚠️ La réponse n'est pas un JSON valide\n")
+        return []
 
 def check_cookies_and_headers(target):
     try:
@@ -140,7 +142,7 @@ def check_cookies_and_headers(target):
         
         return detectedd_ids
     except requests.exceptions.RequestException as e:
-        print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
+        # print(f"[!][!][XXX] Erreur lors de la requête : {e}\n")
         return {}
 
 def test_idor(target_url, id_param, test_values):
@@ -150,7 +152,8 @@ def test_idor(target_url, id_param, test_values):
         response = requests.get(test_url, timeout=5)
         
         if response.status_code == 200:
-            print(f"⚠️ Potentielle faille IDOR détectée sur {test_url} !")
+            print(f"[!!!] Potentielle faille IDOR détectée sur {test_url} !")
+            # print(f"⚠️ Potentielle faille IDOR détectée sur {test_url} !")
         else:
             print(f"[!]~] Aucun accès non autorisé sur {test_url}")
             # print(f"✅  Aucun accès non autorisé sur {test_url}\n")
@@ -220,7 +223,8 @@ def scan_idor(target, formated_target):
                     response = requests.get(test_url, timeout=5)
                     
                     if response.status_code == 200:
-                        print(f"⚠️ Potentielle faille IDOR détectée sur {test_url} !")
+                        print(f"[!!!] Potentielle faille IDOR détectée sur {test_url} !")
+                        # print(f"⚠️ Potentielle faille IDOR détectée sur {test_url} !")
                         exploitable_urls.append(test_url)
                     else:
                         print(f"[!]~] Aucun accès non autorisé sur {test_url}")
@@ -228,6 +232,12 @@ def scan_idor(target, formated_target):
                 
                 if exploitable_urls :
                     results["exploitable_urls"].extend(exploitable_urls)
-    print(f"\n✅  Scan IDOR terminé. Vulnérabilités trouvées : {results}\n")
+    print(f"\n✅  Scan IDOR terminé. Vulnérabilités trouvées : \n")
     # print("\n✅  Scan IDOR terminé.\n")
+    
+    print("[!][~]")
+    print("[!][~]")
+    pprint(results)
+    
+    
     return results
