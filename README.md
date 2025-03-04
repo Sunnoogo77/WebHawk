@@ -180,7 +180,7 @@ WebHawk - Scanner de vulnérabilités web | Par @Sunnoogo77
 Github: https://github.com/Sunnoogo77/WebHawk
 
 
-[+] Cible détectée : https://efrei.fr
+[+] Cible détectée : https://example.com
 ```
 
 ---
