@@ -1,10 +1,7 @@
-### **📌 README.md pour WebHawk - Scanner de Vulnérabilités Web**
----
 # **🦅 WebHawk - Scanner de Vulnérabilités Web**  
 ### **📡 Un outil éducatif pour apprendre et détecter les vulnérabilités web courantes !**  
 
-![WebHawk Banner](https://your-banner-image-link.com) *(Ajoute un logo si tu en as un !)*  
-
+![WebHawk Banner](img/WebHawk_Interface.png)
 ---
 
 ## **📖 Introduction**
