@@ -1,7 +1,7 @@
 # Détection des injections SQL
 import requests
 import urllib3
-from core.utils import find_forms, detect_hidden_sqli_errors, get_csrf_token, detect_hidden_sqli_errors, check_allowed_methods
+from core.utils import find_forms
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -33,32 +33,6 @@ SQLI_SIGNATURES = [
     ]
 
 
-
-# def scan_sqli1(target):
-#     vuln_found = False
-#     sqli_results = {}
-    
-#     for payload in SQLI_PAYLOADS:
-#         test_url = f"{target}?{payload}"
-        
-#         try:
-#             response=  requests.get(test_url, timeout=5)
-#             response_text = response.text.lower()
-            
-#             if any(signature.lower() in response_text for signature in SQLI_SIGNATURES):
-#                 print(f"🔥 SQLi détectée : {test_url}")
-#                 print(f"Contenu reçu : {response.text[:500]}...")
-#                 vuln_found = True
-#                 sqli_results[test_url] = "VULNERABLE"
-#             else:
-#                 sqli_results[test_url] = "Non Vulnerable"
-#         except requests.exceptions.RequestException as e:
-#             print(f"[!][!][XXX] Erreur lors de la requête : {e}")
-#             pass
-    
-
-    # return sqli_results, vuln_found
-
 def scan_sqli(target, formated_target):
     """Teste l'injection SQL (SQLi)"""
     
@@ -76,7 +50,6 @@ def scan_sqli(target, formated_target):
         session = requests.Session()
         session.verify = False
         try:
-            # response = requests.get(test_url, timeout=5)
             response = session.get(test_url, timeout=5)
             print(f"[!]~] Test de l'URL SQLi : {test_url}")
             response_text = response.text.lower()
@@ -89,7 +62,6 @@ def scan_sqli(target, formated_target):
         
         except requests.exceptions.RequestException as e:
             # print(f"[!][!][XXX] Erreur lors de la requête URL SQLi : {e}")
-            # print(f"[!][!][XXX] Err")
             pass
     
     forms = find_forms(target)
@@ -102,7 +74,6 @@ def scan_sqli(target, formated_target):
             inputs = form.get("inputs", [])
             
             target_url = target + action if action else target
-            # allowed_methods = check_allowed_methods(target_url)
             
             
             for input_field in inputs:
@@ -117,10 +88,8 @@ def scan_sqli(target, formated_target):
                     session.verify = False
                     try:
                         if method == "post":
-                            # response = requests.post(target_url, data=form_data, timeout=5)
                             response = session.post(target_url, data=form_data, timeout=5)
                         else:
-                            # response = requests.get(target_url, params=form_data, timeout=5)
                             response = session.get(target_url, params=form_data, timeout=5)
                         
                         response_text = response.text.lower()
@@ -133,7 +102,6 @@ def scan_sqli(target, formated_target):
                     
                     except requests.exceptions.RequestException as e:
                         # print(f"[!][!][XXX] Erreur lors de la requête : {e}")
-                        # print(f"[!][!][XXX] Err")
                         pass
     
     if not vuln_found:

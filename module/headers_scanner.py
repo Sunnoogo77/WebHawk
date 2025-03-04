@@ -1,7 +1,6 @@
 # Vérification des en-têtes HTTP
 
 import requests
-import os
 # from core.report_manager import update_report
 
 SECURITY_HEADERS = {
@@ -79,7 +78,7 @@ def scan_headers(target):
             for header in missing_headers:
                 print(f"-->{header} (Protection abscente)")
             print("\n")
-        
+        print("\n✅ Scan de Headers terminé.\n")
         return headers, missing_headers, misconfigured_headers
     
     except requests.exceptions.RequestException as e:

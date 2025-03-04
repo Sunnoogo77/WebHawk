@@ -1,8 +1,6 @@
 # Scan des ports ouverts
 
 import socket
-import os
-import concurrent.futures
 
 from urllib.parse import urlparse
 
@@ -18,17 +16,15 @@ COMMON_PORTS = {
     135: "RPC",
     139: "NETBIOS-SSN",
     143: "IMAP",
+    587:"SMTPs",
+    465: "SMTPs1",
     443: "HTTPS",
+    1521: "OracleDB",
     3306: "MYSQL",
     3389: "RDP",
     5900: "VNC",
     8080: "HTTP-PROXY",
     }
-
-
-    
-    
-    
 
 
 def scan_port(target, port):
@@ -52,14 +48,10 @@ def scan_ports(target, ports=COMMON_PORTS.keys()):
     
     open_ports = []
     
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        
-        futures = [executor.submit(scan_port, target, port) for port in ports]
-        
-        for future in concurrent.futures.as_completed(futures):
-            result = future.result()
-            if result:
-                open_ports.append(result)
+    for port in ports:
+        result = scan_port(target, port)
+        if result:
+            open_ports.append(result)
 
     if open_ports:
         print(f"\n✅  SCAN TERMINÉ : Ports ouverts détectés : {open_ports}\n")

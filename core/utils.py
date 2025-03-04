@@ -48,7 +48,8 @@ def normalize_target(target):
         if is_ip(target):
             target = "https://" + extract_domain_or_ip(target)
         else:
-            target = "http://" + target
+            target = "https://" + target
+            print(f"------{target}")
             return normalize_target(target)
             
     else:

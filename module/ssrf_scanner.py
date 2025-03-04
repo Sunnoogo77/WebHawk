@@ -3,7 +3,6 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-import re
 
 from pprint import pprint
 
@@ -52,7 +51,6 @@ def find_ssrf_in_urls(target, session=None):
                     if name in SSRF_KEYS:
                         detected_params.append({"url": urljoin(target, url), "param": name})
                         print(f"[!!!] SSRF potentiel détecté dans {urljoin(target, url)}")
-                        # print(f" SSRF potentiel détecté dans {urljoin(target, url)}")
         return detected_params
     except requests.exceptions.RequestException as e:
         # print(f"❌ Erreur lors de la requête : {e}\n")
@@ -97,11 +95,9 @@ def test_ssrf(target_url, param, method="get", session=None):
             
             if "root:x:0:0" in response.text or "EC2Metadata" in response.text or "127.0.0.1" in response.text or "ComputeMetadata" in response.text or "100.100.100.200" in response.text:
                 print(f"[!!!] SSRF détectée sur {test_payload}!")
-                # print(f" SSRF détectée sur {test_payload}!")
                 return {"url": test_payload, "ssrf_exploitable": True}
             if response.status_code == 301 or response.status_code == 302:
                 print(f"[!]~] Redirection détectée sur {test_payload} (Code {response.status_code}). Vérifiez manuellement.")
-                # print(f"⚠️ Redirection détectée sur {test_payload} (Code {response.status_code}). Vérifiez manuellement.")
                 return {"url": test_payload, "ssrf_exploitable": "Redirection"}
         except requests.exceptions.RequestException as e:
             # print(f"❌ Erreur lors de la requête SSRF : {e}")
@@ -117,7 +113,6 @@ def scan_ssrf(target, formated_target, session=None):
     urls_with_ssrf = find_ssrf_in_urls(target, session)
     if urls_with_ssrf:
         print("[!]~] Test SSRF sur les URLs...")
-        # print(" Test SSRF sur les URLs...")
         for item in urls_with_ssrf:
             result = test_ssrf(item["url"], item["param"], "get", session)
             if result:
@@ -127,7 +122,6 @@ def scan_ssrf(target, formated_target, session=None):
     forms_with_ssrf = find_ssrf_in_forms(target, session)
     if forms_with_ssrf:
         print("[!]~] Test SSRF sur les formulaires...")
-        # print("\n Test SSRF sur les formulaires...")
         for form in forms_with_ssrf:
             action = form["action"]
             method = form["method"]

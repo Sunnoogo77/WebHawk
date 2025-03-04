@@ -92,14 +92,12 @@ def scan_csrf(target, formated_target, session=None):
     forms = find_forms(target, session)
     if not forms:
         print("[+]XX Aucun formulaire détecté. Ignoré.")
-        # print("\n✅ Aucun formulaire détecté. Ignoré.")
     else:
         print("[+] Test des formulaires pour protection CSRF...")
         for form in forms:
             has_csrf = check_csrf_protection(form)
             if not has_csrf:
                 print(f"[+] Formulaire potentiellement vulnérable (pas de CSRF token) : {form['action']}")
-                # print(f" Formulaire potentiellement vulnérable (pas de CSRF token) : {form['action']}")
                 results["forms"].append({"form_action": form["action"], "csrf_protected": False, "poc": generate_csrf_poc(form)})
 
             if form["method"] == "get":

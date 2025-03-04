@@ -2,7 +2,6 @@ import requests
 from pprint import pprint
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-import re
 import time
 
 #  Liste des paramètres suspects liés à l'exécution de commandes (potentiellement vulnérables à RCE)
@@ -56,7 +55,6 @@ def find_rce_in_urls(target, session=None):
         return detected_params
     except requests.exceptions.RequestException as e:
         # print(f"❌ Erreur lors de la requête : {e}\n")
-        # print(f"[!] Err")
         return []
 
 def find_rce_in_forms(target, session=None):
@@ -80,7 +78,6 @@ def find_rce_in_forms(target, session=None):
         return detected_forms
     except requests.exceptions.RequestException as e:
         # print(f"❌ Erreur lors de la requête : {e}\n")
-        # print(f"[!] Err")
         return []
 
 def test_rce(target_url, param, method="get", session=None):
@@ -101,16 +98,13 @@ def test_rce(target_url, param, method="get", session=None):
 
             if "RCE_TEST" in response.text or "uid=" in response.text or "Microsoft Windows" in response.text:
                 print(f"[!!!] RCE détectée sur {test_payload} avec le payload : {payload}")
-                # print(f" RCE détectée sur {test_payload} avec le payload : {payload}")
                 return {"url": test_payload, "rce_exploitable": True, "payload": payload, "response_time": response_time}
             elif response_time > 3:
                 print(f"[!!!] Temps de réponse anormalement long sur {test_payload} (Temps : {response_time}s). Vérifiez manuellement.")
-                # print(f"⚠️ Temps de réponse anormalement long sur {test_payload} (Temps : {response_time}s). Vérifiez manuellement.")
                 return {"url": test_payload, "rce_exploitable": "Temps de réponse long", "payload": payload, "response_time": response_time}
 
         except requests.exceptions.RequestException as e:
             # print(f"❌ Erreur lors de la requête RCE : {e}")
-            # print(f"[!] ErrRCE")
             pass
     return None
 
@@ -123,7 +117,6 @@ def scan_rce(target, formated_target, session=None):
     urls_with_rce = find_rce_in_urls(target, session)
     if urls_with_rce:
         print("[+] Test RCE sur les URLs...")
-        # print(" Test RCE sur les URLs...")
         for item in urls_with_rce:
             result = test_rce(item["url"], item["param"], "get", session)
             if result:
@@ -133,7 +126,6 @@ def scan_rce(target, formated_target, session=None):
     forms_with_rce = find_rce_in_forms(target, session)
     if forms_with_rce:
         print("[+] Test RCE sur les formulaires...")
-        # print("\n Test RCE sur les formulaires...")
         for form in forms_with_rce:
             action = form["action"]
             method = form["method"]

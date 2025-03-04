@@ -120,7 +120,6 @@ def analyze_api_requests(target):
         return []
     except ValueError:
         print("[!][!][XXX] La réponse n'est pas un JSON valide\n")
-        #print("⚠️ La réponse n'est pas un JSON valide\n")
         return []
 
 def check_cookies_and_headers(target):
@@ -153,10 +152,8 @@ def test_idor(target_url, id_param, test_values):
         
         if response.status_code == 200:
             print(f"[!!!] Potentielle faille IDOR détectée sur {test_url} !")
-            # print(f"⚠️ Potentielle faille IDOR détectée sur {test_url} !")
         else:
             print(f"[!]~] Aucun accès non autorisé sur {test_url}")
-            # print(f"✅  Aucun accès non autorisé sur {test_url}\n")
 
 def scan_idor(target, formated_target):
     
@@ -172,23 +169,18 @@ def scan_idor(target, formated_target):
     urls_with_ids = find_id_in_urls(target)
     if not urls_with_ids:
         print("[!]~] Aucun ID potentiel détecté dans les URLs...")
-        # print("✅  Aucune URL avec un ID détectée.\n")
     else:
         print("[!]~] ID potentiel détecté dans les URLs...")
-        # print("\n🔍 ID trouvés dans les URLs :")
         for url in urls_with_ids:
             print(f"[!!!] ---> {url}")
-            # print(f"[] {url}")
         results["urls_with_ids"] = urls_with_ids
               
     
     detected_api_ids = analyze_api_requests(target)
     if not detected_api_ids:
         print("[!]~] Aucun ID potentiel détecté dans les réponses API...")
-        # print("\n✅  Aucune donnée ID détectée dans l’API.\n")
     else:
         print("[!]~] ID potentiel détecté dans les réponses API...")
-        # print("\n🔍 ID détectés dans les requêtes API :")
         for key, value in detected_api_ids:
             print(f"[!!!] {key} --->:<--- {value}")
         results["api_detected_ids"] = detected_api_ids
@@ -197,10 +189,8 @@ def scan_idor(target, formated_target):
     cookies_headers_with_ids = check_cookies_and_headers(target)
     if cookies_headers_with_ids:
         print("[!]~]  Aucun ID potentiel détecté dans les cookies ou headers...")
-        # print("\n✅  Aucun ID détecté dans les cookies ou headers.\n")
     else: 
         print("[!]~] ID potentiel détecté dans les cookies ou headers...")
-        # print("\n🔍 ID trouvés dans les cookies ou headers :")
         for key, value in cookies_headers_with_ids.items():
             print(f"[!!!] {key} --->:<--- {value}")
         results["cookies_headers_with_ids"] = cookies_headers_with_ids
@@ -216,7 +206,6 @@ def scan_idor(target, formated_target):
                 
                 exploitable_urls = []
                 
-                # test_idor(url, id_to_test, [id_to_test-1, id_to_test+1])
                 
                 for value in [id_to_test-1, id_to_test+1]:
                     test_url = url.replace(str(id_to_test), str (value))
@@ -224,20 +213,18 @@ def scan_idor(target, formated_target):
                     
                     if response.status_code == 200:
                         print(f"[!!!] Potentielle faille IDOR détectée sur {test_url} !")
-                        # print(f"⚠️ Potentielle faille IDOR détectée sur {test_url} !")
                         exploitable_urls.append(test_url)
                     else:
                         print(f"[!]~] Aucun accès non autorisé sur {test_url}")
-                        # print(f"✅  Aucun accès non autorisé sur {test_url}\n")
                 
                 if exploitable_urls :
                     results["exploitable_urls"].extend(exploitable_urls)
     print(f"\n✅  Scan IDOR terminé. Vulnérabilités trouvées : \n")
-    # print("\n✅  Scan IDOR terminé.\n")
     
     print("[!][~]")
     print("[!][~]")
     pprint(results)
+    print("\n")
     
     
     return results

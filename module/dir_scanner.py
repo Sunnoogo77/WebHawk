@@ -1,8 +1,6 @@
 # Bruteforce des répertoires et fichiers cachés
 import requests
-import os
 from urllib.parse import urljoin
-import re
 import concurrent.futures
 
 # Wordlist de répertoires sensibles (étendue)
@@ -96,8 +94,5 @@ def scan_dir(target, formated_target, use_threads=True):
     if not found_paths:
         print("\n✅ Aucun répertoire ou fichier sensible trouvé.")
 
-    # print("[!][~]")
-    # print("[!][~]")
-    # for items in found_paths:
-    #     print(f"[!][~][+]{items}")
+    print("\n✅ Scan de Directories terminé.\n")
     return found_paths

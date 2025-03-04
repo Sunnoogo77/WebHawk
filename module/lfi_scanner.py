@@ -2,9 +2,6 @@
 import requests
 import urllib3
 
-import os
-from core.report_manager import update_report
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 #Liste des payloads LFI à tester
@@ -54,25 +51,21 @@ def scan_lfi(target, formated_target):
             session = requests.Session()
             session.verify = False
             try:
-                # response = requests.get(url, timeout=5)
                 
                 response = session.get(url, timeout=5)
                 response_text = response.text.lower()
                 
                 if any(signature in response_text for signature in LFI_SIGNATURES):
                     print(f"[!!!] LFI détectée dans l'URL : {url}")
-                    # print(f"🔥 LFI détectée : {url}")
                     print(f"[!!!] Contenu reçu : {response.text[:500]}...")
-                    # print(f"\t----------> {response.text[:500]}...\n")
                     vuln_found = True
                     findings[url] = "VULNERABLE"
                 else:
-                    # findings[url] = "Non Vulnérable"
+                    # findings[url] = "Non Vulnérable" # Pourquoi ne pas ajouter les non vulnérables ?
                     pass
                     
             except requests.exceptions.RequestException as e:
                 # print(f"[!][!][XXX] Erreur lors de la requête : {e}")
-                # print(f"[!][!][XXX] Err")
                 pass
             pass
     
