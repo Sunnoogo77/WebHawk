@@ -302,7 +302,7 @@ def main():
         
         choix = input(f"\n🔁 Voulez-vous scanner une autre cible ? ({Fore.GREEN}O{Style.RESET_ALL}/n) : ").strip().lower()
         if choix != "o":
-            print(f"\n{Fore.RED}[!] Fin du programme. Merci d'avoir utilisé WebHawk ! 🚀{Style.RESET_ALL}")
+            print(f"\n{Fore.RED}[!] Fin du programme. Merci d'avoir utilisé WebHawk ! {Style.RESET_ALL}\n")
             break
         else:
             print(f"\n{Fore.CYAN}🔄 Relance du scan... Veuillez entrer les nouvelles informations.{Style.RESET_ALL}\n")
