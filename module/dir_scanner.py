@@ -2,17 +2,21 @@
 import requests
 from urllib.parse import urljoin
 import concurrent.futures
+from core.config import create_session, DEFAULT_THREADS
 
-# Wordlist de répertoires sensibles (étendue)
+# Wordlist de répertoires sensibles
 COMMON_DIRECTORIES = [
     "admin", "login", "dashboard", "uploads", "backup", "config", "db", "database",
     "api", "logs", "tmp", "cache", "private", "ftp", "hidden", "secrets", "test",
     "old", "files", "include", "inc", "lib", "library", "assets", "images", "scripts",
     "css", "js", "vendor", "modules", "plugins", "themes", "templates", "docs",
-    "manual", "install", "setup", "update", "source", "src", "bin", "cgi-bin"
+    "manual", "install", "setup", "update", "source", "src", "bin", "cgi-bin",
+    "wp-admin", "wp-content", "wp-includes", "phpmyadmin", "cpanel",
+    "server-status", "server-info", ".git", ".svn", ".hg",
+    "console", "debug", "monitoring", "metrics", "health",
 ]
 
-# Extensions de fichiers sensibles (étendue)
+# Extensions de fichiers sensibles
 SENSITIVE_FILES = [
     "config.php", "config.json", "db.sql", "backup.zip", "admin.php", ".htaccess",
     ".env", "wp-config.php", "server-status", "config.ini", "config.yml", "config.xml",
@@ -20,46 +24,45 @@ SENSITIVE_FILES = [
     "access.log", "passwd", "shadow", "id_rsa", "id_dsa", "known_hosts", "htpasswd",
     "sitemap.xml", "robots.txt", "package.json", "package-lock.json", "composer.json",
     "composer.lock", "requirements.txt", "Gemfile", "Gemfile.lock", "Dockerfile",
-    "docker-compose.yml", "LICENSE", "README.md", "CHANGELOG.md", ".gitconfig",
-    ".gitignore", ".htpasswd", ".htgroup", ".bash_history", ".bashrc", ".profile"
+    "docker-compose.yml", ".gitconfig", ".gitignore", ".htpasswd", ".htgroup",
+    "web.config", "crossdomain.xml", "clientaccesspolicy.xml",
+    "phpinfo.php", "info.php", "test.php", "swagger.json", "openapi.json",
+    ".well-known/security.txt", "security.txt",
 ]
 
-# Extensions de fichiers de sauvegarde
-BACKUP_EXTENSIONS = [".bak", ".old", ".save", ".tmp", "~"]
+BACKUP_EXTENSIONS = [".bak", ".old", ".save", ".tmp", "~", ".orig", ".copy", ".swp"]
 
-# Mots-clés sensibles pour la détection de contenu
-SENSITIVE_KEYWORDS = ["password", "secret", "api_key", "token", "database", "db_user", "db_pass"]
+SENSITIVE_KEYWORDS = ["password", "secret", "api_key", "token", "database",
+                      "db_user", "db_pass", "private_key", "credential", "auth"]
 
-def scan_path(session, target, path):
+
+def scan_path(session, target, path, timeout=10):
     """Scan un répertoire ou un fichier."""
-    url = urljoin(target, path)
+    url = urljoin(target + "/", path)
     try:
-        print(f"[~] Test de l'URL : {url}")
-        response = session.head(url, timeout=5, allow_redirects=True)
+        response = session.head(url, timeout=timeout, allow_redirects=True)
         if response.status_code == 200:
             if path.endswith(tuple(SENSITIVE_FILES)):
-                
-                response = session.get(url, timeout=5, allow_redirects=True)
+                response = session.get(url, timeout=timeout, allow_redirects=True)
                 if any(keyword in response.text.lower() for keyword in SENSITIVE_KEYWORDS):
-                    return f"Fichier sensible trouvé (avec contenu sensible) : {url}"
+                    return {"url": url, "status": response.status_code, "type": "sensitive_file_with_content"}
                 else:
-                    return f"⚠️ Fichier sensible trouvé : {url}"
+                    return {"url": url, "status": response.status_code, "type": "sensitive_file"}
             else:
-                return f"⚠️ Trouvé : {url} ({response.status_code})"
+                return {"url": url, "status": response.status_code, "type": "directory"}
         elif response.status_code == 403:
-            return f"⚠️ Trouvé (interdit) : {url} ({response.status_code})"
-    except requests.exceptions.RequestException as e:
-        # print(f"[-][X] ERR")
+            return {"url": url, "status": 403, "type": "forbidden"}
+    except requests.exceptions.RequestException:
         return None
     return None
 
-def scan_dir(target, formated_target, use_threads=True):
+
+def scan_dir(target, formated_target, use_threads=True, threads=DEFAULT_THREADS):
     """Scan les répertoires et fichiers sensibles sur un serveur web."""
-    print(f"\n\t==============Scan Directory Traversal sur --> {formated_target} <--  ==============\n")
+    print(f"\n\t==============Scan Directory sur --> {formated_target} <-- 🔍 ==============\n")
 
     found_paths = []
-    session = requests.Session()
-    session.verify = False  # Ignore SSL warnings
+    session = create_session()
 
     paths_to_scan = []
     paths_to_scan.extend(COMMON_DIRECTORIES)
@@ -71,28 +74,32 @@ def scan_dir(target, formated_target, use_threads=True):
         for ext in BACKUP_EXTENSIONS:
             paths_to_scan.append(file + ext)
 
+    # Remove duplicates
+    paths_to_scan = list(set(paths_to_scan))
+
+    total = len(paths_to_scan)
+    print(f"[~] {total} chemins à tester...")
+
     if use_threads:
-        print("[!][~] Utilisation de threads pour le scan...")
-        print("[!][~]...")
-        
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            results = [executor.submit(scan_path, session, target, path) for path in paths_to_scan]
-            for future in concurrent.futures.as_completed(results):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+            futures = {executor.submit(scan_path, session, target, path): path for path in paths_to_scan}
+            for future in concurrent.futures.as_completed(futures):
                 result = future.result()
                 if result:
                     found_paths.append(result)
-                    print(f"[+] {result}")
-                    # print(result)
+                    status_icon = "🔥" if result["type"] == "sensitive_file_with_content" else "⚠️"
+                    print(f"[+] {status_icon} {result['type']}: {result['url']} ({result['status']})")
     else:
         for path in paths_to_scan:
             result = scan_path(session, target, path)
             if result:
                 found_paths.append(result)
-                print(f"[+] {result}")
-                # print(result)
+                print(f"[+] {result['type']}: {result['url']} ({result['status']})")
 
     if not found_paths:
         print("\n✅ Aucun répertoire ou fichier sensible trouvé.")
+    else:
+        print(f"\n[+] {len(found_paths)} résultat(s) trouvé(s)")
 
     print("\n✅ Scan de Directories terminé.\n")
     return found_paths
