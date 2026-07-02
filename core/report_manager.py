@@ -4,7 +4,6 @@ import os
 import threading
 from datetime import datetime
 
-REPORT_PATH = "reports/webhawk_report.json"
 _report_lock = threading.Lock()
 
 

@@ -33,7 +33,7 @@ LFI_SIGNATURES = [
     "root:", "daemon:", "bin:", "sys:",
     "[boot loader]", "[operating systems]",
     "ServerName", "DocumentRoot",
-    "[mysqld]", "[client]", "******EXT3", "EXT4", "UUID=", "dev/sda",
+    "[mysqld]", "[client]", "EXT3", "EXT4", "UUID=", "dev/sda",
     "HTTP_USER_AGENT", "HTTP_COOKIE", "HTTP_HOST",
     "Warning: include(", "Warning: require(", "failed to open stream",
     "No such file or directory", "on line", "open_basedir restriction",
