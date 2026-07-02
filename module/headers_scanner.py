@@ -1,7 +1,7 @@
 # Vérification des en-têtes HTTP
 
 import requests
-# from core.report_manager import update_report
+from core.config import create_session, DEFAULT_TIMEOUT
 
 SECURITY_HEADERS = {
     "Strict-Transport-Security": {
@@ -34,13 +34,9 @@ SECURITY_HEADERS = {
     }
 }
 
-def format_url(target):
-    if not target.startswith("http://") and not target.startswith("https://"):
-        target = "http://" + target
-    return target
 
 def check_security_headers(headers):
-    """Vérifie la présence et la bonne configuration des headers de sécurité"""
+    """Vérifie la présence et la bonne configuration des headers de sécurité."""
     missing_headers = []
     misconfigured_headers = []
     findings = {}
@@ -56,32 +52,38 @@ def check_security_headers(headers):
 
     return findings, missing_headers, misconfigured_headers
 
-def scan_headers(target):
-    
 
+def scan_headers(target, timeout=DEFAULT_TIMEOUT):
+    """Scan HTTP security headers on the target."""
     print(f"\n\t==============Scan des en-tête HTTP sur -->{target}<-- 🔍 ==============\n")
-    
-    
-    try :
-        response = requests.get(target, timeout=5)
+
+    session = create_session()
+
+    try:
+        response = session.get(target, timeout=timeout)
         headers = response.headers
-        
+
         print("\n\t Headers de Securité Présent :")
         for key, value in headers.items():
-            
             print(f" {key}: {value}")
-            
+
         findings, missing_headers, misconfigured_headers = check_security_headers(headers)
-        
+
         if missing_headers:
-            print("\n\t Headers de Securité Manquants :")
+            print("\n\t⚠️  Headers de Securité Manquants :")
             for header in missing_headers:
-                print(f"-->{header} (Protection abscente)")
-            print("\n")
+                desc = SECURITY_HEADERS[header]["description"]
+                print(f"  --> {header} ({desc})")
+
+        if misconfigured_headers:
+            print("\n\t⚠️  Headers mal configurés :")
+            for header, value, expected in misconfigured_headers:
+                print(f"  --> {header}: '{value}' (attendu: '{expected}')")
+
         print("\n✅ Scan de Headers terminé.\n")
         return headers, missing_headers, misconfigured_headers
-    
+
     except requests.exceptions.RequestException as e:
-        # print(f"\n Erreur dlors de la requête : {e}\n")
-        pass
+        print(f"\n❌ Erreur lors de la requête : {e}\n")
+        return {}, list(SECURITY_HEADERS.keys()), []
     
